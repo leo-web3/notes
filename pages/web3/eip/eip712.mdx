@@ -33,11 +33,11 @@ As such, the adage "don't roll your own crypto" applies. Instead, a peer-reviewe
 
 This EIP aims to improve the usability of off-chain message signing for use on-chain. We are seeing growing adoption of off-chain message signing as it saves gas and reduces the number of transactions on the blockchain. Currently signed messages are an opaque hex string displayed to the user with little context about the items that make up the message.
 
-![eth_sign screenshot](../assets/eip-712/eth_sign.png)
+![eth_sign screenshot](https://github.com/ethereum/EIPs/blob/master/assets/eip-712/eth_sign.png)
 
 Here we outline a scheme to encode data along with its structure which allows it to be displayed to the user for verification when signing. Below is an example of what a user could be shown when signing a message according to the present proposal.
 
-![eth_signTypedData screenshot](../assets/eip-712/eth_signTypedData.png)
+![eth_signTypedData screenshot](https://github.com/ethereum/EIPs/blob/master/assets/eip-712/eth_signTypedData.png)
 
 ## Specification
 
@@ -92,7 +92,7 @@ The encoding is compliant with [EIP-191][EIP-191]. The 'version byte' is fixed t
 
 To define the set of all structured data, we start with defining acceptable types. Like ABIv2 these are closely related to Solidity types. It is illustrative to adopt Solidity notation to explain the definitions. The standard is specific to the Ethereum Virtual Machine, but aims to be agnostic to higher level languages. Example:
 
-```Solidity
+```javascript
 struct Mail {
     address from;
     address to;
@@ -141,7 +141,7 @@ The struct values are encoded recursively as `hashStruct(value)`. This is undefi
 ### Definition of `domainSeparator`
 
 
-```Solidity
+```javascript
 domainSeparator = hashStruct(eip712Domain)
 ```
 
@@ -178,7 +178,7 @@ By adding a prefix to the message makes the calculated signature recognisable as
 
 Typed data is a JSON object containing type information, domain separator parameters and the message object. Below is the json-schema definition for `TypedData` param.
 
-```JavaScript
+```javascript
 {
   type: 'object',
   properties: {
@@ -222,7 +222,7 @@ curl -X POST --data '{"jsonrpc":"2.0","method":"eth_signTypedData","params":["0x
 ```
 
 Result:
-```JavaScript
+```javascript
 {
   "id":1,
   "jsonrpc": "2.0",
@@ -244,7 +244,7 @@ Two methods are added to Web3.js version 1 that parallel the `web3.eth.sign` and
 
 #### web3.eth.signTypedData
 
-```JavaScript
+```javascript
 web3.eth.signTypedData(typedData, address [, callback])
 ```
 
@@ -266,7 +266,7 @@ Signs typed data using a specific account. This account needs to be unlocked.
 
 See the `eth_signTypedData` JSON-API example above for the value of `typedData`.
 
-```JavaScript
+```javascript
 web3.eth.signTypedData(typedData, "0xCD2a3d9F938E13CD947Ec05AbC7FE734Df8DD826")
 .then(console.log);
 > "0x4355c47d63924e8a72e509b65029052eb6c299d53a04e167c5775fd466751c9d07299936d304c153f6443dfa05f40ff007d72911b6f72307f996231605b915621c"
@@ -274,7 +274,7 @@ web3.eth.signTypedData(typedData, "0xCD2a3d9F938E13CD947Ec05AbC7FE734Df8DD826")
 
 #### web3.eth.personal.signTypedData
 
-```JavaScript
+```javascript
 web3.eth.personal.signTypedData(typedData, address, password [, callback])
 ```
 
@@ -296,7 +296,7 @@ The function `hashStruct` starts with a `typeHash` to separate types. By giving 
 
 The `typeHash` is designed to turn into a compile time constant in Solidity. For example:
 
-```Solidity
+```javascript
 bytes32 constant MAIL_TYPEHASH = keccak256(
   "Mail(address from,address to,string contents)");
 ```
@@ -318,7 +318,7 @@ For the type hash several alternatives were considered and rejected for the reas
 
 The `encodeData` is designed to allow easy implementation of `hashStruct` in Solidity:
 
-```Solidity
+```javascript
 function hashStruct(Mail memory mail) pure returns (bytes32 hash) {
     return keccak256(abi.encode(
         MAIL_TYPEHASH,
@@ -331,7 +331,7 @@ function hashStruct(Mail memory mail) pure returns (bytes32 hash) {
 
 it also allows for an efficient in-place implementation in EVM
 
-```Solidity
+```javascript
 function hashStruct(Mail memory mail) pure returns (bytes32 hash) {
 
     // Compute sub-hashes
@@ -381,7 +381,7 @@ The Solidity expression `keccak256(someInstance)` for an instance `someInstance`
 
 ## Test Cases
 
-An example contract can be found in [Example.sol][ex-sol] and an example implementation of signing in JavaScript in [Example.js][ex-js]
+An example contract can be found in [Example.sol][ex-sol] and an example implementation of signing in javascript in [Example.js][ex-js]
 
 [ex-sol]: ../assets/eip-712/Example.sol
 [ex-js]: ../assets/eip-712/Example.js
