@@ -1,6 +1,6 @@
 ---
 eip: 1474
-title: EIP-1474 Remote procedure call specification
+title: Remote procedure call specification
 author: Paul Bouchon <mail@bitpshr.net>, Erik Marks (@rekmarks)
 discussions-to: https://ethereum-magicians.org/t/eip-remote-procedure-call-specification/1537
 status: Stagnant
@@ -94,13 +94,13 @@ The RPC methods below take a default block identifier as a parameter.
 - `eth_call`
 - `eth_getProof`
 
-Since there is no way to clearly distinguish between a `Data` parameter and a `Quantity` parameter, [EIP-1898](./eip-1898.md) provides a format to specify a block either using the block hash or block number. The block identifier is a JSON `object` with the following fields:
+Since there is no way to clearly distinguish between a `Data` parameter and a `Quantity` parameter, [EIP-1898](/web3/eip/eip1898) provides a format to specify a block either using the block hash or block number. The block identifier is a JSON `object` with the following fields:
 
 |Property|Type|Description|
 |-|-|-|
-|`[blockNumber]`|{[`Quantity`](#quantity)}|The block in the canonical chain with this number|
-|OR `[blockHash]`|{[`Data`](#data)}|The block uniquely identified by this hash. The `blockNumber` and `blockHash` properties are mutually exclusive; exactly one of them must be set.|
-|`requireCanonical`|{`boolean`}|(optional) Whether or not to throw an error if the block is not in the canonical chain as described below. Only allowed in conjunction with the `blockHash` tag. Defaults to `false`.|
+|`[blockNumber]`|&#123;[`Quantity`](#quantity)&#125;|The block in the canonical chain with this number|
+|OR `[blockHash]`|&#123;[`Data`](#data)&#125;|The block uniquely identified by this hash. The `blockNumber` and `blockHash` properties are mutually exclusive; exactly one of them must be set.|
+|`requireCanonical`|&#123;`boolean`&#125;|(optional) Whether or not to throw an error if the block is not in the canonical chain as described below. Only allowed in conjunction with the `blockHash` tag. Defaults to `false`.|
 
 If the block is not found, the callee SHOULD raise a JSON-RPC error (the recommended error code is `-32001: Resource not found`. If the tag is `blockHash` and `requireCanonical` is `true`, the callee SHOULD additionally raise a JSON-RPC error if the block is not in the canonical chain (the recommended error code is `-32000: Invalid input` and in any case should be different than the error code for the block not found case so that the caller can distinguish the cases). The block-not-found check SHOULD take precedence over the block-is-canonical check, so that if the block is not found the callee raises block-not-found rather than block-not-canonical.
 
@@ -140,7 +140,7 @@ _(none)_
 
 ##### Returns
 
-{`string`} - client version
+&#123;`string`&#125; - client version
 
 ##### Example
 
@@ -172,11 +172,11 @@ Hashes data using the Keccak-256 algorithm
 
 |#|Type|Description|
 |-|-|-|
-|1|{[`Data`](#data)}|data to hash|
+|1|&#123;[`Data`](#data)&#125;|data to hash|
 
 ##### Returns
 
-{[`Data`](#data)} - Keccak-256 hash of the given data
+&#123;[`Data`](#data)&#125; - Keccak-256 hash of the given data
 
 ##### Example
 
@@ -210,7 +210,7 @@ _(none)_
 
 ##### Returns
 
-{`boolean`} - `true` if listening is active or `false` if listening is not active
+&#123;`boolean`&#125; - `true` if listening is active or `false` if listening is not active
 
 ##### Example
 
@@ -244,7 +244,7 @@ _(none)_
 
 ##### Returns
 
-{[`Quantity`](#quantity)} - number of connected peers
+&#123;[`Quantity`](#quantity)&#125; - number of connected peers
 
 ##### Example
 ```sh
@@ -277,7 +277,7 @@ _(none)_
 
 ##### Returns
 
-{`string`} - chain ID associated with the current network
+&#123;`string`&#125; - chain ID associated with the current network
 
 Common chain IDs:
 
@@ -286,7 +286,7 @@ Common chain IDs:
 - `"4"` - Rinkeby testnet
 - `"42"` - Kovan testnet
 
-**Note:** See EIP-155 for a [complete list](./eip-155.md#list-of-chain-ids) of possible chain IDs.
+**Note:** See EIP-155 for a [complete list](/web3/eip/eip155#list-of-chain-ids) of possible chain IDs.
 
 ##### Example
 
@@ -320,7 +320,7 @@ _(none)_
 
 ##### Returns
 
-{[`Data[]`](#data)} - array of addresses
+&#123;[`Data[]`](#data)&#125; - array of addresses
 
 ##### Example
 
@@ -354,7 +354,7 @@ _(none)_
 
 ##### Returns
 
-{[`Quantity`](#quantity)} - number of the latest block
+&#123;[`Quantity`](#quantity)&#125; - number of the latest block
 
 ##### Example
 
@@ -386,12 +386,12 @@ Executes a new message call immediately without submitting a transaction to the 
 
 |#|Type|Description|
 |-|-|-|
-|1|{`object`}|@property {[`Data`](#data)} `[from]` - transaction sender<br/>@property {[`Data`](#data)} `to` - transaction recipient or `null` if deploying a contract<br/>@property {[`Quantity`](#quantity)} `[gas]` - gas provided for transaction execution<br/>@property {[`Quantity`](#quantity)} `[gasPrice]` - price in wei of each gas used<br/>@property {[`Quantity`](#quantity)} `[value]` - value in wei sent with this transaction<br/>@property {[`Data`](#data)} `[data]` - contract code or a hashed method call with encoded args|
-|2|{[`Quantity`](#quantity)\|`string`\|[`Block Identifier`](#block-identifier)}|block number, or one of `"latest"`, `"earliest"` or `"pending"`, or a block identifier as described in [`Block Identifier`](#block-identifier)|
+|1|&#123;`object`&#125;|@property &#123;[`Data`](#data)&#125; `[from]` - transaction sender<br/>@property &#123;[`Data`](#data)&#125; `to` - transaction recipient or `null` if deploying a contract<br/>@property &#123;[`Quantity`](#quantity)&#125; `[gas]` - gas provided for transaction execution<br/>@property &#123;[`Quantity`](#quantity)&#125; `[gasPrice]` - price in wei of each gas used<br/>@property &#123;[`Quantity`](#quantity)&#125; `[value]` - value in wei sent with this transaction<br/>@property &#123;[`Data`](#data)&#125; `[data]` - contract code or a hashed method call with encoded args|
+|2|&#123;[`Quantity`](#quantity)\|`string`\|[`Block Identifier`](#block-identifier)&#125;|block number, or one of `"latest"`, `"earliest"` or `"pending"`, or a block identifier as described in [`Block Identifier`](#block-identifier)|
 
 ##### Returns
 
-{[`Data`](#data)} - return value of executed contract
+&#123;[`Data`](#data)&#125; - return value of executed contract
 
 ##### Example
 
@@ -432,7 +432,7 @@ _(none)_
 
 ##### Returns
 
-{[`Data`](#data)} - coinbase address
+&#123;[`Data`](#data)&#125; - coinbase address
 
 ##### Example
 
@@ -466,12 +466,12 @@ Estimates the gas necessary to complete a transaction without submitting it to t
 
 |#|Type|Description|
 |-|-|-|
-|1|{`object`}|@property {[`Data`](#data)} `[from]` - transaction sender<br/>@property {[`Data`](#data)} `[to]` - transaction recipient<br/>@property {[`Quantity`](#quantity)} `[gas]` - gas provided for transaction execution<br/>@property {[`Quantity`](#quantity)} `[gasPrice]` - price in wei of each gas used<br/>@property {[`Quantity`](#quantity)} `[value]` - value in wei sent with this transaction<br/>@property {[`Data`](#data)} `[data]` - contract code or a hashed method call with encoded args|
-|2|{[`Quantity`](#quantity)\|`string`}|block number, or one of `"latest"`, `"earliest"` or `"pending"`|
+|1|&#123;`object`&#125;|@property &#123;[`Data`](#data)&#125; `[from]` - transaction sender<br/>@property &#123;[`Data`](#data)&#125; `[to]` - transaction recipient<br/>@property &#123;[`Quantity`](#quantity)&#125; `[gas]` - gas provided for transaction execution<br/>@property &#123;[`Quantity`](#quantity)&#125; `[gasPrice]` - price in wei of each gas used<br/>@property &#123;[`Quantity`](#quantity)&#125; `[value]` - value in wei sent with this transaction<br/>@property &#123;[`Data`](#data)&#125; `[data]` - contract code or a hashed method call with encoded args|
+|2|&#123;[`Quantity`](#quantity)\|`string`&#125;|block number, or one of `"latest"`, `"earliest"` or `"pending"`|
 
 ##### Returns
 
-{[`Quantity`](#quantity)} - amount of gas required by transaction
+&#123;[`Quantity`](#quantity)&#125; - amount of gas required by transaction
 
 ##### Example
 
@@ -512,7 +512,7 @@ _(none)_
 
 ##### Returns
 
-{[`Quantity`](#quantity)} - current gas price in wei
+&#123;[`Quantity`](#quantity)&#125; - current gas price in wei
 
 ##### Example
 
@@ -544,12 +544,12 @@ Returns the balance of an address in wei
 
 |#|Type|Description|
 |-|-|-|
-|1|{[`Data`](#data)}|address to query for balance|
-|2|{[`Quantity`](#quantity)\|`string`\|[`Block Identifier`](#block-identifier)}|block number, or one of `"latest"`, `"earliest"` or `"pending"`, or a block identifier as described in [`Block Identifier`](#block-identifier)|
+|1|&#123;[`Data`](#data)&#125;|address to query for balance|
+|2|&#123;[`Quantity`](#quantity)\|`string`\|[`Block Identifier`](#block-identifier)&#125;|block number, or one of `"latest"`, `"earliest"` or `"pending"`, or a block identifier as described in [`Block Identifier`](#block-identifier)|
 
 ##### Returns
 
-{[`Quantity`](#quantity)} - balance of the provided account in wei
+&#123;[`Quantity`](#quantity)&#125; - balance of the provided account in wei
 
 ##### Example
 
@@ -581,32 +581,32 @@ Returns information about a block specified by hash
 
 |#|Type|Description|
 |-|-|-|
-|1|{[`Data`](#data)}|hash of a block|
-|2|{`boolean`}|`true` will pull full transaction objects, `false` will pull transaction hashes|
+|1|&#123;[`Data`](#data)&#125;|hash of a block|
+|2|&#123;`boolean`&#125;|`true` will pull full transaction objects, `false` will pull transaction hashes|
 
 ##### Returns
 
-{`null|object`} - `null` if no block is found, otherwise a block object with the following members:
+&#123;`null|object`&#125; - `null` if no block is found, otherwise a block object with the following members:
 
-- {[`Data`](#data)} `extraData` - "extra data" field of this block
-- {[`Data`](#data)} `hash` - block hash or `null` if pending
-- {[`Data`](#data)} `logsBloom` - logs bloom filter or `null` if pending
-- {[`Data`](#data)} `miner` - address that received this block's mining rewards
-- {[`Data`](#data)} `nonce` - proof-of-work hash or `null` if pending
-- {[`Data`](#data)} `parentHash` - parent block hash
-- {[`Data`](#data)} `receiptsRoot` -root of the this block's receipts trie
-- {[`Data`](#data)} `sha3Uncles` - SHA3 of the uncles data in this block
-- {[`Data`](#data)} `stateRoot` - root of this block's final state trie
-- {[`Data`](#data)} `transactionsRoot` - root of this block's transaction trie
-- {[`Quantity`](#quantity)} `difficulty` - difficulty for this block
-- {[`Quantity`](#quantity)} `gasLimit` - maximum gas allowed in this block
-- {[`Quantity`](#quantity)} `gasUsed` - total used gas by all transactions in this block
-- {[`Quantity`](#quantity)} `number` - block number or `null` if pending
-- {[`Quantity`](#quantity)} `size` - size of this block in bytes
-- {[`Quantity`](#quantity)} `timestamp` - unix timestamp of when this block was collated
-- {[`Quantity`](#quantity)} `totalDifficulty` - total difficulty of the chain until this block
-- {`Array<Transaction>`} `transactions` - list of transaction objects or hashes
-- {`Array<Transaction>`} `uncles` - list of uncle hashes
+- &#123;[`Data`](#data)&#125; `extraData` - "extra data" field of this block
+- &#123;[`Data`](#data)&#125; `hash` - block hash or `null` if pending
+- &#123;[`Data`](#data)&#125; `logsBloom` - logs bloom filter or `null` if pending
+- &#123;[`Data`](#data)&#125; `miner` - address that received this block's mining rewards
+- &#123;[`Data`](#data)&#125; `nonce` - proof-of-work hash or `null` if pending
+- &#123;[`Data`](#data)&#125; `parentHash` - parent block hash
+- &#123;[`Data`](#data)&#125; `receiptsRoot` -root of the this block's receipts trie
+- &#123;[`Data`](#data)&#125; `sha3Uncles` - SHA3 of the uncles data in this block
+- &#123;[`Data`](#data)&#125; `stateRoot` - root of this block's final state trie
+- &#123;[`Data`](#data)&#125; `transactionsRoot` - root of this block's transaction trie
+- &#123;[`Quantity`](#quantity)&#125; `difficulty` - difficulty for this block
+- &#123;[`Quantity`](#quantity)&#125; `gasLimit` - maximum gas allowed in this block
+- &#123;[`Quantity`](#quantity)&#125; `gasUsed` - total used gas by all transactions in this block
+- &#123;[`Quantity`](#quantity)&#125; `number` - block number or `null` if pending
+- &#123;[`Quantity`](#quantity)&#125; `size` - size of this block in bytes
+- &#123;[`Quantity`](#quantity)&#125; `timestamp` - unix timestamp of when this block was collated
+- &#123;[`Quantity`](#quantity)&#125; `totalDifficulty` - total difficulty of the chain until this block
+- &#123;`Array<Transaction>`&#125; `transactions` - list of transaction objects or hashes
+- &#123;`Array<Transaction>`&#125; `uncles` - list of uncle hashes
 
 ##### Example
 
@@ -657,32 +657,32 @@ Returns information about a block specified by number
 
 |#|Type|Description|
 |-|-|-|
-|1|{[`Quantity`](#quantity)\|`string`}|block number, or one of `"latest"`, `"earliest"` or `"pending"`|
-|2|{`boolean`}|`true` will pull full transaction objects, `false` will pull transaction hashes|
+|1|&#123;[`Quantity`](#quantity)\|`string`&#125;|block number, or one of `"latest"`, `"earliest"` or `"pending"`|
+|2|&#123;`boolean`&#125;|`true` will pull full transaction objects, `false` will pull transaction hashes|
 
 ##### Returns
 
-{`null|object`} - `null` if no block is found, otherwise a block object with the following members:
+&#123;`null|object`&#125; - `null` if no block is found, otherwise a block object with the following members:
 
-- {[`Data`](#data)} `extraData` - "extra data" field of this block
-- {[`Data`](#data)} `hash` - block hash or `null` if pending
-- {[`Data`](#data)} `logsBloom` - logs bloom filter or `null` if pending
-- {[`Data`](#data)} `miner` - address that received this block's mining rewards
-- {[`Data`](#data)} `nonce` - proof-of-work hash or `null` if pending
-- {[`Data`](#data)} `parentHash` - parent block hash
-- {[`Data`](#data)} `receiptsRoot` -root of the this block's receipts trie
-- {[`Data`](#data)} `sha3Uncles` - SHA3 of the uncles data in this block
-- {[`Data`](#data)} `stateRoot` - root of this block's final state trie
-- {[`Data`](#data)} `transactionsRoot` - root of this block's transaction trie
-- {[`Quantity`](#quantity)} `difficulty` - difficulty for this block
-- {[`Quantity`](#quantity)} `gasLimit` - maximum gas allowed in this block
-- {[`Quantity`](#quantity)} `gasUsed` - total used gas by all transactions in this block
-- {[`Quantity`](#quantity)} `number` - block number or `null` if pending
-- {[`Quantity`](#quantity)} `size` - size of this block in bytes
-- {[`Quantity`](#quantity)} `timestamp` - unix timestamp of when this block was collated
-- {[`Quantity`](#quantity)} `totalDifficulty` - total difficulty of the chain until this block
-- {`Array<Transaction>`} `transactions` - list of transaction objects or hashes
-- {`Array<Transaction>`} `uncles` - list of uncle hashes
+- &#123;[`Data`](#data)&#125; `extraData` - "extra data" field of this block
+- &#123;[`Data`](#data)&#125; `hash` - block hash or `null` if pending
+- &#123;[`Data`](#data)&#125; `logsBloom` - logs bloom filter or `null` if pending
+- &#123;[`Data`](#data)&#125; `miner` - address that received this block's mining rewards
+- &#123;[`Data`](#data)&#125; `nonce` - proof-of-work hash or `null` if pending
+- &#123;[`Data`](#data)&#125; `parentHash` - parent block hash
+- &#123;[`Data`](#data)&#125; `receiptsRoot` -root of the this block's receipts trie
+- &#123;[`Data`](#data)&#125; `sha3Uncles` - SHA3 of the uncles data in this block
+- &#123;[`Data`](#data)&#125; `stateRoot` - root of this block's final state trie
+- &#123;[`Data`](#data)&#125; `transactionsRoot` - root of this block's transaction trie
+- &#123;[`Quantity`](#quantity)&#125; `difficulty` - difficulty for this block
+- &#123;[`Quantity`](#quantity)&#125; `gasLimit` - maximum gas allowed in this block
+- &#123;[`Quantity`](#quantity)&#125; `gasUsed` - total used gas by all transactions in this block
+- &#123;[`Quantity`](#quantity)&#125; `number` - block number or `null` if pending
+- &#123;[`Quantity`](#quantity)&#125; `size` - size of this block in bytes
+- &#123;[`Quantity`](#quantity)&#125; `timestamp` - unix timestamp of when this block was collated
+- &#123;[`Quantity`](#quantity)&#125; `totalDifficulty` - total difficulty of the chain until this block
+- &#123;`Array<Transaction>`&#125; `transactions` - list of transaction objects or hashes
+- &#123;`Array<Transaction>`&#125; `uncles` - list of uncle hashes
 
 ##### Example
 
@@ -733,11 +733,11 @@ Returns the number of transactions in a block specified by block hash
 
 |#|Type|Description|
 |-|-|-|
-|1|{[`Data`](#data)}|hash of a block|
+|1|&#123;[`Data`](#data)&#125;|hash of a block|
 
 ##### Returns
 
-{[`Quantity`](#quantity)} - number of transactions in the specified block
+&#123;[`Quantity`](#quantity)&#125; - number of transactions in the specified block
 
 ##### Example
 
@@ -769,11 +769,11 @@ Returns the number of transactions in a block specified by block number
 
 |#|Type|Description|
 |-|-|-|
-|1|{[`Quantity`](#quantity)\|`string`}|block number, or one of `"latest"`, `"earliest"` or `"pending"`|
+|1|&#123;[`Quantity`](#quantity)\|`string`&#125;|block number, or one of `"latest"`, `"earliest"` or `"pending"`|
 
 ##### Returns
 
-{[`Quantity`](#quantity)} - number of transactions in the specified block
+&#123;[`Quantity`](#quantity)&#125; - number of transactions in the specified block
 
 ##### Example
 
@@ -805,12 +805,12 @@ Returns the contract code stored at a given address
 
 |#|Type|Description|
 |-|-|-|
-|1|{[`Data`](#data)}|address to query for code|
-|2|{[`Quantity`](#quantity)\|`string`\|[`Block Identifier`](#block-identifier)}|block number, or one of `"latest"`, `"earliest"` or `"pending"`, or a block identifier as described in [`Block Identifier`](#block-identifier)|
+|1|&#123;[`Data`](#data)&#125;|address to query for code|
+|2|&#123;[`Quantity`](#quantity)\|`string`\|[`Block Identifier`](#block-identifier)&#125;|block number, or one of `"latest"`, `"earliest"` or `"pending"`, or a block identifier as described in [`Block Identifier`](#block-identifier)|
 
 ##### Returns
 
-{[`Data`](#data)} - code from the specified address
+&#123;[`Data`](#data)&#125; - code from the specified address
 
 ##### Example
 
@@ -842,21 +842,21 @@ Returns a list of all logs based on filter ID since the last log retrieval
 
 |#|Type|Description|
 |-|-|-|
-|1|{[`Quantity`](#quantity)}|ID of the filter|
+|1|&#123;[`Quantity`](#quantity)&#125;|ID of the filter|
 
 ##### Returns
 
-{`Array<Log>`} - array of log objects with the following members:
+&#123;`Array<Log>`&#125; - array of log objects with the following members:
 
-- {[`Data`](#data)} `address` - address from which this log originated
-- {[`Data`](#data)} `blockHash` - hash of block containing this log or `null` if pending
-- {[`Data`](#data)} `data` - contains the non-indexed arguments of the log
-- {[`Data`](#data)} `transactionHash` - hash of the transaction that created this log or `null` if pending
-- {[`Quantity`](#quantity)} `blockNumber` - number of block containing this log or `null` if pending
-- {[`Quantity`](#quantity)} `logIndex` - index of this log within its block or `null` if pending
-- {[`Quantity`](#quantity)} `transactionIndex` - index of the transaction that created this log or `null` if pending
-- {[`Data[]`](#data)} `topics` - list of order-dependent topics
-- {`boolean`} `removed` - `true` if this filter has been destroyed and is invalid
+- &#123;[`Data`](#data)&#125; `address` - address from which this log originated
+- &#123;[`Data`](#data)&#125; `blockHash` - hash of block containing this log or `null` if pending
+- &#123;[`Data`](#data)&#125; `data` - contains the non-indexed arguments of the log
+- &#123;[`Data`](#data)&#125; `transactionHash` - hash of the transaction that created this log or `null` if pending
+- &#123;[`Quantity`](#quantity)&#125; `blockNumber` - number of block containing this log or `null` if pending
+- &#123;[`Quantity`](#quantity)&#125; `logIndex` - index of this log within its block or `null` if pending
+- &#123;[`Quantity`](#quantity)&#125; `transactionIndex` - index of the transaction that created this log or `null` if pending
+- &#123;[`Data[]`](#data)&#125; `topics` - list of order-dependent topics
+- &#123;`boolean`&#125; `removed` - `true` if this filter has been destroyed and is invalid
 
 **Note:** The return value of `eth_getFilterChanges` when retrieving logs from `eth_newBlockFilter` and `eth_newPendingTransactionFilter` filters will be an array of hashes, not an array of Log objects.
 
@@ -899,21 +899,21 @@ Returns a list of all logs based on filter ID
 
 |#|Type|Description|
 |-|-|-|
-|1|{[`Quantity`](#quantity)}|ID of the filter|
+|1|&#123;[`Quantity`](#quantity)&#125;|ID of the filter|
 
 ##### Returns
 
-{`Array<Log>`} - array of log objects with the following members:
+&#123;`Array<Log>`&#125; - array of log objects with the following members:
 
-- {[`Data`](#data)} address - address from which this log originated
-- {[`Data`](#data)} blockHash - hash of block containing this log or `null` if pending
-- {[`Data`](#data)} data - contains the non-indexed arguments of the log
-- {[`Data`](#data)} transactionHash - hash of the transaction that created this log or `null` if pending
-- {[`Quantity`](#quantity)} blockNumber - number of block containing this log or `null` if pending
-- {[`Quantity`](#quantity)} logIndex - index of this log within its block or `null` if pending
-- {[`Quantity`](#quantity)} transactionIndex - index of the transaction that created this log or `null` if pending
-- {`Array<Data>`} topics - list of order-dependent topics
-- {`boolean`} removed - `true` if this filter has been destroyed and is invalid
+- &#123;[`Data`](#data)&#125; address - address from which this log originated
+- &#123;[`Data`](#data)&#125; blockHash - hash of block containing this log or `null` if pending
+- &#123;[`Data`](#data)&#125; data - contains the non-indexed arguments of the log
+- &#123;[`Data`](#data)&#125; transactionHash - hash of the transaction that created this log or `null` if pending
+- &#123;[`Quantity`](#quantity)&#125; blockNumber - number of block containing this log or `null` if pending
+- &#123;[`Quantity`](#quantity)&#125; logIndex - index of this log within its block or `null` if pending
+- &#123;[`Quantity`](#quantity)&#125; transactionIndex - index of the transaction that created this log or `null` if pending
+- &#123;`Array<Data>`&#125; topics - list of order-dependent topics
+- &#123;`boolean`&#125; removed - `true` if this filter has been destroyed and is invalid
 
 **Note:** The return value of `eth_getFilterLogs` when retrieving logs from `eth_newBlockFilter` and `eth_newPendingTransactionFilter` filters will be an array of hashes, not an array of Log objects.
 
@@ -956,23 +956,23 @@ Returns a list of all logs based on a filter object
 
 |#|Type|Description|
 |-|-|-|
-|1|{`object`}|@property {[`Quantity`](#quantity)\|`string`} `[fromBlock]` - block number, or one of `"latest"`, `"earliest"` or `"pending"`<br/>@property {[`Quantity`](#quantity)\|`string`} `[toBlock]` - block number, or one of `"latest"`, `"earliest"` or `"pending"`<br/>@property {[`Data`](#data)\|[`Data[]`](#data)} `[address]` - contract address or a list of addresses from which logs should originate<br/>@property {[`Data[]`](#data)} `[topics]` - list of order-dependent topics<br/>@property {[`Data`](#data)} `[blockhash]` - restrict logs to a block by hash|
+|1|&#123;`object`&#125;|@property &#123;[`Quantity`](#quantity)\|`string`&#125; `[fromBlock]` - block number, or one of `"latest"`, `"earliest"` or `"pending"`<br/>@property &#123;[`Quantity`](#quantity)\|`string`&#125; `[toBlock]` - block number, or one of `"latest"`, `"earliest"` or `"pending"`<br/>@property &#123;[`Data`](#data)\|[`Data[]`](#data)&#125; `[address]` - contract address or a list of addresses from which logs should originate<br/>@property &#123;[`Data[]`](#data)&#125; `[topics]` - list of order-dependent topics<br/>@property &#123;[`Data`](#data)&#125; `[blockhash]` - restrict logs to a block by hash|
 
 **Note:** If `blockhash` is passed, neither `fromBlock` nor `toBlock` are allowed or respected.
 
 ##### Returns
 
-{`Array<Log>`} - array of log objects with the following members:
+&#123;`Array<Log>`&#125; - array of log objects with the following members:
 
-- {[`Data`](#data)} `address` - address from which this log originated
-- {[`Data`](#data)} `blockHash` - hash of block containing this log or `null` if pending
-- {[`Data`](#data)} `data` - contains the non-indexed arguments of the log
-- {[`Data`](#data)} `transactionHash` - hash of the transaction that created this log or `null` if pending
-- {[`Quantity`](#quantity)} `blockNumber` - number of block containing this log or `null` if pending
-- {[`Quantity`](#quantity)} `logIndex` - index of this log within its block or `null` if pending
-- {[`Quantity`](#quantity)} `transactionIndex` - index of the transaction that created this log or `null` if pending
-- {[`Data`](#data)} `topics` - list of order-dependent topics
-- {`boolean`} `removed` - `true` if this filter has been destroyed and is invalid
+- &#123;[`Data`](#data)&#125; `address` - address from which this log originated
+- &#123;[`Data`](#data)&#125; `blockHash` - hash of block containing this log or `null` if pending
+- &#123;[`Data`](#data)&#125; `data` - contains the non-indexed arguments of the log
+- &#123;[`Data`](#data)&#125; `transactionHash` - hash of the transaction that created this log or `null` if pending
+- &#123;[`Quantity`](#quantity)&#125; `blockNumber` - number of block containing this log or `null` if pending
+- &#123;[`Quantity`](#quantity)&#125; `logIndex` - index of this log within its block or `null` if pending
+- &#123;[`Quantity`](#quantity)&#125; `transactionIndex` - index of the transaction that created this log or `null` if pending
+- &#123;[`Data`](#data)&#125; `topics` - list of order-dependent topics
+- &#123;`boolean`&#125; `removed` - `true` if this filter has been destroyed and is invalid
 
 ##### Example
 
@@ -1015,13 +1015,13 @@ Returns the value from a storage position at an address
 
 |#|Type|Description|
 |-|-|-|
-|1|{[`Data`](#data)}|address of stored data|
-|2|{[`Quantity`](#quantity)}|index into stored data|
-|3|{[`Quantity`](#quantity)\|`string`\|[`Block Identifier`](#block-identifier)}|block number, or one of `"latest"`, `"earliest"` or `"pending"`, or a block identifier as described in [`Block Identifier`](#block-identifier)|
+|1|&#123;[`Data`](#data)&#125;|address of stored data|
+|2|&#123;[`Quantity`](#quantity)&#125;|index into stored data|
+|3|&#123;[`Quantity`](#quantity)\|`string`\|[`Block Identifier`](#block-identifier)&#125;|block number, or one of `"latest"`, `"earliest"` or `"pending"`, or a block identifier as described in [`Block Identifier`](#block-identifier)|
 
 ##### Returns
 
-{[`Data`](#data)} - value stored at the given address and data index
+&#123;[`Data`](#data)&#125; - value stored at the given address and data index
 
 ##### Example
 
@@ -1053,27 +1053,27 @@ Returns information about a transaction specified by block hash and transaction 
 
 |#|Type|Description|
 |-|-|-|
-|1|{[`Data`](#data)}|hash of a block|
-|2|{[`Quantity`](#quantity)}|index of a transaction in the specified block|
+|1|&#123;[`Data`](#data)&#125;|hash of a block|
+|2|&#123;[`Quantity`](#quantity)&#125;|index of a transaction in the specified block|
 
 ##### Returns
 
-{`null|object`} - `null` if no transaction is found, otherwise a transaction object with the following members:
+&#123;`null|object`&#125; - `null` if no transaction is found, otherwise a transaction object with the following members:
 
-- {[`Data`](#data)} `r` - ECDSA signature r
-- {[`Data`](#data)} `s` - ECDSA signature s
-- {[`Data`](#data)} `blockHash` - hash of block containing this transaction or `null` if pending
-- {[`Data`](#data)} `from` - transaction sender
-- {[`Data`](#data)} `hash` - hash of this transaction
-- {[`Data`](#data)} `input` - contract code or a hashed method call
-- {[`Data`](#data)} `to` - transaction recipient or `null` if deploying a contract
-- {[`Quantity`](#quantity)} `v` - ECDSA recovery ID
-- {[`Quantity`](#quantity)} `blockNumber` - number of block containing this transaction or `null` if pending
-- {[`Quantity`](#quantity)} `gas` - gas provided for transaction execution
-- {[`Quantity`](#quantity)} `gasPrice` - price in wei of each gas used
-- {[`Quantity`](#quantity)} `nonce` - unique number identifying this transaction
-- {[`Quantity`](#quantity)} `transactionIndex` - index of this transaction in the block or `null` if pending
-- {[`Quantity`](#quantity)} `value` - value in wei sent with this transaction
+- &#123;[`Data`](#data)&#125; `r` - ECDSA signature r
+- &#123;[`Data`](#data)&#125; `s` - ECDSA signature s
+- &#123;[`Data`](#data)&#125; `blockHash` - hash of block containing this transaction or `null` if pending
+- &#123;[`Data`](#data)&#125; `from` - transaction sender
+- &#123;[`Data`](#data)&#125; `hash` - hash of this transaction
+- &#123;[`Data`](#data)&#125; `input` - contract code or a hashed method call
+- &#123;[`Data`](#data)&#125; `to` - transaction recipient or `null` if deploying a contract
+- &#123;[`Quantity`](#quantity)&#125; `v` - ECDSA recovery ID
+- &#123;[`Quantity`](#quantity)&#125; `blockNumber` - number of block containing this transaction or `null` if pending
+- &#123;[`Quantity`](#quantity)&#125; `gas` - gas provided for transaction execution
+- &#123;[`Quantity`](#quantity)&#125; `gasPrice` - price in wei of each gas used
+- &#123;[`Quantity`](#quantity)&#125; `nonce` - unique number identifying this transaction
+- &#123;[`Quantity`](#quantity)&#125; `transactionIndex` - index of this transaction in the block or `null` if pending
+- &#123;[`Quantity`](#quantity)&#125; `value` - value in wei sent with this transaction
 
 ##### Example
 
@@ -1120,27 +1120,27 @@ Returns information about a transaction specified by block number and transactio
 
 |#|Type|Description|
 |-|-|-|
-|1|{[`Quantity`](#quantity)\|`string`}|block number, or one of `"latest"`, `"earliest"` or `"pending"`|
-|2|{[`Quantity`](#quantity)}|index of a transaction in the specified block|
+|1|&#123;[`Quantity`](#quantity)\|`string`&#125;|block number, or one of `"latest"`, `"earliest"` or `"pending"`|
+|2|&#123;[`Quantity`](#quantity)&#125;|index of a transaction in the specified block|
 
 ##### Returns
 
-{`null|object`} - `null` if no transaction is found, otherwise a transaction object with the following members:
+&#123;`null|object`&#125; - `null` if no transaction is found, otherwise a transaction object with the following members:
 
-- {[`Data`](#data)} `r` - ECDSA signature r
-- {[`Data`](#data)} `s` - ECDSA signature s
-- {[`Data`](#data)} `blockHash` - hash of block containing this transaction or `null` if pending
-- {[`Data`](#data)} `from` - transaction sender
-- {[`Data`](#data)} `hash` - hash of this transaction
-- {[`Data`](#data)} `input` - contract code or a hashed method call
-- {[`Data`](#data)} `to` - transaction recipient or `null` if deploying a contract
-- {[`Quantity`](#quantity)} `v` - ECDSA recovery ID
-- {[`Quantity`](#quantity)} `blockNumber` - number of block containing this transaction or `null` if pending
-- {[`Quantity`](#quantity)} `gas` - gas provided for transaction execution
-- {[`Quantity`](#quantity)} `gasPrice` - price in wei of each gas used
-- {[`Quantity`](#quantity)} `nonce` - unique number identifying this transaction
-- {[`Quantity`](#quantity)} `transactionIndex` - index of this transaction in the block or `null` if pending
-- {[`Quantity`](#quantity)} `value` - value in wei sent with this transaction
+- &#123;[`Data`](#data)&#125; `r` - ECDSA signature r
+- &#123;[`Data`](#data)&#125; `s` - ECDSA signature s
+- &#123;[`Data`](#data)&#125; `blockHash` - hash of block containing this transaction or `null` if pending
+- &#123;[`Data`](#data)&#125; `from` - transaction sender
+- &#123;[`Data`](#data)&#125; `hash` - hash of this transaction
+- &#123;[`Data`](#data)&#125; `input` - contract code or a hashed method call
+- &#123;[`Data`](#data)&#125; `to` - transaction recipient or `null` if deploying a contract
+- &#123;[`Quantity`](#quantity)&#125; `v` - ECDSA recovery ID
+- &#123;[`Quantity`](#quantity)&#125; `blockNumber` - number of block containing this transaction or `null` if pending
+- &#123;[`Quantity`](#quantity)&#125; `gas` - gas provided for transaction execution
+- &#123;[`Quantity`](#quantity)&#125; `gasPrice` - price in wei of each gas used
+- &#123;[`Quantity`](#quantity)&#125; `nonce` - unique number identifying this transaction
+- &#123;[`Quantity`](#quantity)&#125; `transactionIndex` - index of this transaction in the block or `null` if pending
+- &#123;[`Quantity`](#quantity)&#125; `value` - value in wei sent with this transaction
 
 ##### Example
 
@@ -1187,26 +1187,26 @@ Returns information about a transaction specified by hash
 
 |#|Type|Description|
 |-|-|-|
-|1|{[`Data`](#data)}|hash of a transaction|
+|1|&#123;[`Data`](#data)&#125;|hash of a transaction|
 
 ##### Returns
 
-{`null|object`} - `null` if no transaction is found, otherwise a transaction object with the following members:
+&#123;`null|object`&#125; - `null` if no transaction is found, otherwise a transaction object with the following members:
 
-- {[`Data`](#data)} `r` - ECDSA signature r
-- {[`Data`](#data)} `s` - ECDSA signature s
-- {[`Data`](#data)} `blockHash` - hash of block containing this transaction or `null` if pending
-- {[`Data`](#data)} `from` - transaction sender
-- {[`Data`](#data)} `hash` - hash of this transaction
-- {[`Data`](#data)} `input` - contract code or a hashed method call
-- {[`Data`](#data)} `to` - transaction recipient or `null` if deploying a contract
-- {[`Quantity`](#quantity)} `v` - ECDSA recovery ID
-- {[`Quantity`](#quantity)} `blockNumber` - number of block containing this transaction or `null` if pending
-- {[`Quantity`](#quantity)} `gas` - gas provided for transaction execution
-- {[`Quantity`](#quantity)} `gasPrice` - price in wei of each gas used
-- {[`Quantity`](#quantity)} `nonce` - unique number identifying this transaction
-- {[`Quantity`](#quantity)} `transactionIndex` - index of this transaction in the block or `null` if pending
-- {[`Quantity`](#quantity)} `value` - value in wei sent with this transaction
+- &#123;[`Data`](#data)&#125; `r` - ECDSA signature r
+- &#123;[`Data`](#data)&#125; `s` - ECDSA signature s
+- &#123;[`Data`](#data)&#125; `blockHash` - hash of block containing this transaction or `null` if pending
+- &#123;[`Data`](#data)&#125; `from` - transaction sender
+- &#123;[`Data`](#data)&#125; `hash` - hash of this transaction
+- &#123;[`Data`](#data)&#125; `input` - contract code or a hashed method call
+- &#123;[`Data`](#data)&#125; `to` - transaction recipient or `null` if deploying a contract
+- &#123;[`Quantity`](#quantity)&#125; `v` - ECDSA recovery ID
+- &#123;[`Quantity`](#quantity)&#125; `blockNumber` - number of block containing this transaction or `null` if pending
+- &#123;[`Quantity`](#quantity)&#125; `gas` - gas provided for transaction execution
+- &#123;[`Quantity`](#quantity)&#125; `gasPrice` - price in wei of each gas used
+- &#123;[`Quantity`](#quantity)&#125; `nonce` - unique number identifying this transaction
+- &#123;[`Quantity`](#quantity)&#125; `transactionIndex` - index of this transaction in the block or `null` if pending
+- &#123;[`Quantity`](#quantity)&#125; `value` - value in wei sent with this transaction
 
 ##### Example
 
@@ -1253,12 +1253,12 @@ Returns the number of transactions sent from an address
 
 |#|Type|Description|
 |-|-|-|
-|1|{[`Data`](#data)}|address to query for sent transactions|
-|2|{[`Quantity`](#quantity)\|`string`\|[`Block Identifier`](#block-identifier)}|block number, or one of `"latest"`, `"earliest"` or `"pending"`, or a block identifier as described in [`Block Identifier`](#block-identifier)|
+|1|&#123;[`Data`](#data)&#125;|address to query for sent transactions|
+|2|&#123;[`Quantity`](#quantity)\|`string`\|[`Block Identifier`](#block-identifier)&#125;|block number, or one of `"latest"`, `"earliest"` or `"pending"`, or a block identifier as described in [`Block Identifier`](#block-identifier)|
 
 ##### Returns
 
-{[`Quantity`](#quantity)} - number of transactions sent from the specified address
+&#123;[`Quantity`](#quantity)&#125; - number of transactions sent from the specified address
 
 ##### Example
 
@@ -1292,24 +1292,24 @@ Returns the receipt of a transaction specified by hash
 
 |#|Type|Description|
 |-|-|-|
-|1|{[`Data`](#data)}|hash of a transaction|
+|1|&#123;[`Data`](#data)&#125;|hash of a transaction|
 
 ##### Returns
 
-{`null|object`} - `null` if no transaction is found, otherwise a transaction receipt object with the following members:
+&#123;`null|object`&#125; - `null` if no transaction is found, otherwise a transaction receipt object with the following members:
 
-- {[`Data`](#data)} `blockHash` - hash of block containing this transaction
-- {[`Data`](#data)} `contractAddress` - address of new contract or `null` if no contract was created
-- {[`Data`](#data)} `from` - transaction sender
-- {[`Data`](#data)} `logsBloom` - logs bloom filter
-- {[`Data`](#data)} `to` - transaction recipient or `null` if deploying a contract
-- {[`Data`](#data)} `transactionHash` - hash of this transaction
-- {[`Quantity`](#quantity)} `blockNumber` - number of block containing this transaction
-- {[`Quantity`](#quantity)} `cumulativeGasUsed` - gas used by this and all preceding transactions in this block
-- {[`Quantity`](#quantity)} `gasUsed` - gas used by this transaction
-- {[`Quantity`](#quantity)} `status` - `1` if this transaction was successful or `0` if it failed
-- {[`Quantity`](#quantity)} `transactionIndex` - index of this transaction in the block
-- {`Array<Log>`} `logs` - list of log objects generated by this transaction
+- &#123;[`Data`](#data)&#125; `blockHash` - hash of block containing this transaction
+- &#123;[`Data`](#data)&#125; `contractAddress` - address of new contract or `null` if no contract was created
+- &#123;[`Data`](#data)&#125; `from` - transaction sender
+- &#123;[`Data`](#data)&#125; `logsBloom` - logs bloom filter
+- &#123;[`Data`](#data)&#125; `to` - transaction recipient or `null` if deploying a contract
+- &#123;[`Data`](#data)&#125; `transactionHash` - hash of this transaction
+- &#123;[`Quantity`](#quantity)&#125; `blockNumber` - number of block containing this transaction
+- &#123;[`Quantity`](#quantity)&#125; `cumulativeGasUsed` - gas used by this and all preceding transactions in this block
+- &#123;[`Quantity`](#quantity)&#125; `gasUsed` - gas used by this transaction
+- &#123;[`Quantity`](#quantity)&#125; `status` - `1` if this transaction was successful or `0` if it failed
+- &#123;[`Quantity`](#quantity)&#125; `transactionIndex` - index of this transaction in the block
+- &#123;`Array<Log>`&#125; `logs` - list of log objects generated by this transaction
 
 ##### Example
 
@@ -1352,31 +1352,31 @@ Returns information about an uncle specified by block hash and uncle index posit
 
 |#|Type|Description|
 |-|-|-|
-|1|{[`Data`](#data)}|hash of a block|
-|2|{[`Quantity`](#quantity)}|index of uncle|
+|1|&#123;[`Data`](#data)&#125;|hash of a block|
+|2|&#123;[`Quantity`](#quantity)&#125;|index of uncle|
 
 ##### Returns
 
-{`null|object`} - `null` if no block or uncle is found, otherwise an uncle object with the following members:
+&#123;`null|object`&#125; - `null` if no block or uncle is found, otherwise an uncle object with the following members:
 
-- {[`Data`](#data)} `extraData` - "extra data" field of this block
-- {[`Data`](#data)} `hash` - block hash or `null` if pending
-- {[`Data`](#data)} `logsBloom` - logs bloom filter or `null` if pending
-- {[`Data`](#data)} `miner` - address that received this block's mining rewards
-- {[`Data`](#data)} `nonce` - proof-of-work hash or `null` if pending
-- {[`Data`](#data)} `parentHash` - parent block hash
-- {[`Data`](#data)} `receiptsRoot` -root of the this block's receipts trie
-- {[`Data`](#data)} `sha3Uncles` - SHA3 of the uncles data in this block
-- {[`Data`](#data)} `stateRoot` - root of this block's final state trie
-- {[`Data`](#data)} `transactionsRoot` - root of this block's transaction trie
-- {[`Quantity`](#quantity)} `difficulty` - difficulty for this block
-- {[`Quantity`](#quantity)} `gasLimit` - maximum gas allowed in this block
-- {[`Quantity`](#quantity)} `gasUsed` - total used gas by all transactions in this block
-- {[`Quantity`](#quantity)} `number` - block number or `null` if pending
-- {[`Quantity`](#quantity)} `size` - size of this block in bytes
-- {[`Quantity`](#quantity)} `timestamp` - unix timestamp of when this block was collated
-- {[`Quantity`](#quantity)} `totalDifficulty` - total difficulty of the chain until this block
-- {`Array<Transaction>`} `uncles` - list of uncle hashes
+- &#123;[`Data`](#data)&#125; `extraData` - "extra data" field of this block
+- &#123;[`Data`](#data)&#125; `hash` - block hash or `null` if pending
+- &#123;[`Data`](#data)&#125; `logsBloom` - logs bloom filter or `null` if pending
+- &#123;[`Data`](#data)&#125; `miner` - address that received this block's mining rewards
+- &#123;[`Data`](#data)&#125; `nonce` - proof-of-work hash or `null` if pending
+- &#123;[`Data`](#data)&#125; `parentHash` - parent block hash
+- &#123;[`Data`](#data)&#125; `receiptsRoot` -root of the this block's receipts trie
+- &#123;[`Data`](#data)&#125; `sha3Uncles` - SHA3 of the uncles data in this block
+- &#123;[`Data`](#data)&#125; `stateRoot` - root of this block's final state trie
+- &#123;[`Data`](#data)&#125; `transactionsRoot` - root of this block's transaction trie
+- &#123;[`Quantity`](#quantity)&#125; `difficulty` - difficulty for this block
+- &#123;[`Quantity`](#quantity)&#125; `gasLimit` - maximum gas allowed in this block
+- &#123;[`Quantity`](#quantity)&#125; `gasUsed` - total used gas by all transactions in this block
+- &#123;[`Quantity`](#quantity)&#125; `number` - block number or `null` if pending
+- &#123;[`Quantity`](#quantity)&#125; `size` - size of this block in bytes
+- &#123;[`Quantity`](#quantity)&#125; `timestamp` - unix timestamp of when this block was collated
+- &#123;[`Quantity`](#quantity)&#125; `totalDifficulty` - total difficulty of the chain until this block
+- &#123;`Array<Transaction>`&#125; `uncles` - list of uncle hashes
 
 ##### Example
 
@@ -1426,31 +1426,31 @@ Returns information about an uncle specified by block number and uncle index pos
 
 |#|Type|Description|
 |-|-|-|
-|1|{[`Quantity`](#quantity)\|`string`}|block number, or one of `"latest"`, `"earliest"` or `"pending"`|
-|2|{[`Quantity`](#quantity)}|index of uncle|
+|1|&#123;[`Quantity`](#quantity)\|`string`&#125;|block number, or one of `"latest"`, `"earliest"` or `"pending"`|
+|2|&#123;[`Quantity`](#quantity)&#125;|index of uncle|
 
 ##### Returns
 
-{`null|object`} - `null` if no block or uncle is found, otherwise an uncle object with the following members:
+&#123;`null|object`&#125; - `null` if no block or uncle is found, otherwise an uncle object with the following members:
 
-- {[`Data`](#data)} `extraData` - "extra data" field of this block
-- {[`Data`](#data)} `hash` - block hash or `null` if pending
-- {[`Data`](#data)} `logsBloom` - logs bloom filter or `null` if pending
-- {[`Data`](#data)} `miner` - address that received this block's mining rewards
-- {[`Data`](#data)} `nonce` - proof-of-work hash or `null` if pending
-- {[`Data`](#data)} `parentHash` - parent block hash
-- {[`Data`](#data)} `receiptsRoot` -root of the this block's receipts trie
-- {[`Data`](#data)} `sha3Uncles` - SHA3 of the uncles data in this block
-- {[`Data`](#data)} `stateRoot` - root of this block's final state trie
-- {[`Data`](#data)} `transactionsRoot` - root of this block's transaction trie
-- {[`Quantity`](#quantity)} `difficulty` - difficulty for this block
-- {[`Quantity`](#quantity)} `gasLimit` - maximum gas allowed in this block
-- {[`Quantity`](#quantity)} `gasUsed` - total used gas by all transactions in this block
-- {[`Quantity`](#quantity)} `number` - block number or `null` if pending
-- {[`Quantity`](#quantity)} `size` - size of this block in bytes
-- {[`Quantity`](#quantity)} `timestamp` - unix timestamp of when this block was collated
-- {[`Quantity`](#quantity)} `totalDifficulty` - total difficulty of the chain until this block
-- {`Array<Transaction>`} `uncles` - list of uncle hashes
+- &#123;[`Data`](#data)&#125; `extraData` - "extra data" field of this block
+- &#123;[`Data`](#data)&#125; `hash` - block hash or `null` if pending
+- &#123;[`Data`](#data)&#125; `logsBloom` - logs bloom filter or `null` if pending
+- &#123;[`Data`](#data)&#125; `miner` - address that received this block's mining rewards
+- &#123;[`Data`](#data)&#125; `nonce` - proof-of-work hash or `null` if pending
+- &#123;[`Data`](#data)&#125; `parentHash` - parent block hash
+- &#123;[`Data`](#data)&#125; `receiptsRoot` -root of the this block's receipts trie
+- &#123;[`Data`](#data)&#125; `sha3Uncles` - SHA3 of the uncles data in this block
+- &#123;[`Data`](#data)&#125; `stateRoot` - root of this block's final state trie
+- &#123;[`Data`](#data)&#125; `transactionsRoot` - root of this block's transaction trie
+- &#123;[`Quantity`](#quantity)&#125; `difficulty` - difficulty for this block
+- &#123;[`Quantity`](#quantity)&#125; `gasLimit` - maximum gas allowed in this block
+- &#123;[`Quantity`](#quantity)&#125; `gasUsed` - total used gas by all transactions in this block
+- &#123;[`Quantity`](#quantity)&#125; `number` - block number or `null` if pending
+- &#123;[`Quantity`](#quantity)&#125; `size` - size of this block in bytes
+- &#123;[`Quantity`](#quantity)&#125; `timestamp` - unix timestamp of when this block was collated
+- &#123;[`Quantity`](#quantity)&#125; `totalDifficulty` - total difficulty of the chain until this block
+- &#123;`Array<Transaction>`&#125; `uncles` - list of uncle hashes
 
 ##### Example
 
@@ -1500,11 +1500,11 @@ Returns the number of uncles in a block specified by block hash
 
 |#|Type|Description|
 |-|-|-|
-|1|{[`Data`](#data)}|hash of a block|
+|1|&#123;[`Data`](#data)&#125;|hash of a block|
 
 ##### Returns
 
-{[`Quantity`](#quantity)} - number of uncles in the specified block
+&#123;[`Quantity`](#quantity)&#125; - number of uncles in the specified block
 
 ##### Example
 
@@ -1536,11 +1536,11 @@ Returns the number of uncles in a block specified by block number
 
 |#|Type|Description|
 |-|-|-|
-|1|{[`Quantity`](#quantity)\|`string`}|block number, or one of `"latest"`, `"earliest"` or `"pending"`|
+|1|&#123;[`Quantity`](#quantity)\|`string`&#125;|block number, or one of `"latest"`, `"earliest"` or `"pending"`|
 
 ##### Returns
 
-{[`Quantity`](#quantity)} - number of uncles in the specified block
+&#123;[`Quantity`](#quantity)&#125; - number of uncles in the specified block
 
 ##### Example
 
@@ -1574,11 +1574,11 @@ _none_
 
 ##### Returns
 
-{[`Data[]`](#data)} - array with the following items:
+&#123;[`Data[]`](#data)&#125; - array with the following items:
 
-1. {[`Data`](#data)} - current block header pow-hash
-1. {[`Data`](#data)} - seed hash used for the DAG
-1. {[`Data`](#data)} - boundary condition ("target"), 2^256 / difficulty
+1. &#123;[`Data`](#data)&#125; - current block header pow-hash
+1. &#123;[`Data`](#data)&#125; - seed hash used for the DAG
+1. &#123;[`Data`](#data)&#125; - boundary condition ("target"), 2^256 / difficulty
 
 ##### Example
 
@@ -1616,7 +1616,7 @@ _(none)_
 
 ##### Returns
 
-{[`Quantity`](#quantity)} - number of hashes-per-second
+&#123;[`Quantity`](#quantity)&#125; - number of hashes-per-second
 
 ##### Example
 
@@ -1650,7 +1650,7 @@ _(none)_
 
 ##### Returns
 
-{`boolean`} - `true` if this client is mining or `false` if it is not mining
+&#123;`boolean`&#125; - `true` if this client is mining or `false` if it is not mining
 
 ##### Example
 
@@ -1684,7 +1684,7 @@ _none_
 
 ##### Returns
 
-{[`Quantity`](#quantity)} - ID of the newly-created filter that can be used with `eth_getFilterChanges`
+&#123;[`Quantity`](#quantity)&#125; - ID of the newly-created filter that can be used with `eth_getFilterChanges`
 
 ##### Example
 
@@ -1716,7 +1716,7 @@ Creates a filter to listen for specific state changes that can then be used with
 
 |#|Type|Description|
 |-|-|-|
-|1|{`object`}|@property {[`Quantity`](#quantity)\|`string`} `[fromBlock]` - block number, or one of `"latest"`, `"earliest"` or `"pending"`<br/>@property {[`Quantity`](#quantity)\|`string`} `[toBlock]` - block number, or one of `"latest"`, `"earliest"` or `"pending"`<br/>@property {[`Data`](#data)\|[`Data[]`](#data)} `[address]` - contract address or a list of addresses from which logs should originate<br/>@property {[`Data[]`](#data)} `[topics]` - list of order-dependent topics|
+|1|&#123;`object`&#125;|@property &#123;[`Quantity`](#quantity)\|`string`&#125; `[fromBlock]` - block number, or one of `"latest"`, `"earliest"` or `"pending"`<br/>@property &#123;[`Quantity`](#quantity)\|`string`&#125; `[toBlock]` - block number, or one of `"latest"`, `"earliest"` or `"pending"`<br/>@property &#123;[`Data`](#data)\|[`Data[]`](#data)&#125; `[address]` - contract address or a list of addresses from which logs should originate<br/>@property &#123;[`Data[]`](#data)&#125; `[topics]` - list of order-dependent topics|
 
 **Note:** Topics are order-dependent. A transaction with a log with topics `[A, B]` will be matched by the following topic filters:
 - `[]` - "anything"
@@ -1727,7 +1727,7 @@ Creates a filter to listen for specific state changes that can then be used with
 
 ##### Returns
 
-{[`Quantity`](#quantity)} - ID of the newly-created filter that can be used with `eth_getFilterChanges`
+&#123;[`Quantity`](#quantity)&#125; - ID of the newly-created filter that can be used with `eth_getFilterChanges`
 
 ##### Example
 
@@ -1763,7 +1763,7 @@ _none_
 
 ##### Returns
 
-{[`Quantity`](#quantity)} - ID of the newly-created filter that can be used with `eth_getFilterChanges`
+&#123;[`Quantity`](#quantity)&#125; - ID of the newly-created filter that can be used with `eth_getFilterChanges`
 
 ##### Example
 
@@ -1797,7 +1797,7 @@ _(none)_
 
 ##### Returns
 
-{`string`} - current Ethereum protocol version
+&#123;`string`&#125; - current Ethereum protocol version
 
 ##### Example
 ```sh
@@ -1828,11 +1828,11 @@ Sends and already-signed transaction to the network
 
 |#|Type|Description|
 |-|-|-|
-|1|{[`Data`](#data)}|signed transaction data|
+|1|&#123;[`Data`](#data)&#125;|signed transaction data|
 
 ##### Returns
 
-{[`Data`](#data)} - transaction hash, or the zero hash if the transaction is not yet available
+&#123;[`Data`](#data)&#125; - transaction hash, or the zero hash if the transaction is not yet available
 
 ##### Example
 
@@ -1864,11 +1864,11 @@ Creates, signs, and sends a new transaction to the network
 
 |#|Type|Description|
 |-|-|-|
-|1|{`object`}|@property {[`Data`](#data)} `from` - transaction sender<br/>@property {[`Data`](#data)} `[to]` - transaction recipient<br/>@property {[`Quantity`](#quantity)} `[gas="0x15f90"]` - gas provided for transaction execution<br/>@property {[`Quantity`](#quantity)} `[gasPrice]` - price in wei of each gas used<br/>@property {[`Quantity`](#quantity)} `[value]` - value in wei sent with this transaction<br/>@property {[`Data`](#data)} `[data]` - contract code or a hashed method call with encoded args<br/>@property {[`Quantity`](#quantity)} `[nonce]` - unique number identifying this transaction|
+|1|&#123;`object`&#125;|@property &#123;[`Data`](#data)&#125; `from` - transaction sender<br/>@property &#123;[`Data`](#data)&#125; `[to]` - transaction recipient<br/>@property &#123;[`Quantity`](#quantity)&#125; `[gas="0x15f90"]` - gas provided for transaction execution<br/>@property &#123;[`Quantity`](#quantity)&#125; `[gasPrice]` - price in wei of each gas used<br/>@property &#123;[`Quantity`](#quantity)&#125; `[value]` - value in wei sent with this transaction<br/>@property &#123;[`Data`](#data)&#125; `[data]` - contract code or a hashed method call with encoded args<br/>@property &#123;[`Quantity`](#quantity)&#125; `[nonce]` - unique number identifying this transaction|
 
 ##### Returns
 
-{[`Data`](#data)} - transaction hash, or the zero hash if the transaction is not yet available
+&#123;[`Data`](#data)&#125; - transaction hash, or the zero hash if the transaction is not yet available
 
 ##### Example
 
@@ -1907,12 +1907,12 @@ Calculates an Ethereum-specific signature in the form of `keccak256("\x19Ethereu
 
 |#|Type|Description|
 |-|-|-|
-|1|{[`Data`](#data)}|address to use for signing|
-|2|{[`Data`](#data)}|data to sign|
+|1|&#123;[`Data`](#data)&#125;|address to use for signing|
+|2|&#123;[`Data`](#data)&#125;|data to sign|
 
 ##### Returns
 
-{[`Data`](#data)} - signature hash of the provided data
+&#123;[`Data`](#data)&#125; - signature hash of the provided data
 
 ##### Example
 
@@ -1944,11 +1944,11 @@ Signs a transaction that can be submitted to the network at a later time using w
 
 |#|Type|Description|
 |-|-|-|
-|1|{`object`}|@property {[`Data`](#data)} `from` - transaction sender<br/>@property {[`Data`](#data)} `[to]` - transaction recipient<br/>@property {[`Quantity`](#quantity)} `[gas="0x15f90"]` - gas provided for transaction execution<br/>@property {[`Quantity`](#quantity)} `[gasPrice]` - price in wei of each gas used<br/>@property {[`Quantity`](#quantity)} `[value]` - value in wei sent with this transaction<br/>@property {[`Data`](#data)} `[data]` - contract code or a hashed method call with encoded args<br/>@property {[`Quantity`](#quantity)} `[nonce]` - unique number identifying this transaction|
+|1|&#123;`object`&#125;|@property &#123;[`Data`](#data)&#125; `from` - transaction sender<br/>@property &#123;[`Data`](#data)&#125; `[to]` - transaction recipient<br/>@property &#123;[`Quantity`](#quantity)&#125; `[gas="0x15f90"]` - gas provided for transaction execution<br/>@property &#123;[`Quantity`](#quantity)&#125; `[gasPrice]` - price in wei of each gas used<br/>@property &#123;[`Quantity`](#quantity)&#125; `[value]` - value in wei sent with this transaction<br/>@property &#123;[`Data`](#data)&#125; `[data]` - contract code or a hashed method call with encoded args<br/>@property &#123;[`Quantity`](#quantity)&#125; `[nonce]` - unique number identifying this transaction|
 
 ##### Returns
 
-{[`Data`](#data)} - signature hash of the transaction object
+&#123;[`Data`](#data)&#125; - signature hash of the transaction object
 
 ##### Example
 
@@ -1987,14 +1987,14 @@ Calculates an Ethereum-specific signature in the form of `keccak256("\x19Ethereu
 
 |#|Type|Description|
 |-|-|-|
-|1|{[`Data`](#data)}|address to use for signing|
-|2|{[`Data`](#data)}|message to sign containing type information, a domain separator, and data|
+|1|&#123;[`Data`](#data)&#125;|address to use for signing|
+|2|&#123;[`Data`](#data)&#125;|message to sign containing type information, a domain separator, and data|
 
-**Note:** Client developers should refer to EIP-712 for complete semantics around [encoding and signing data](./eip-712.md#specification). Dapp developers should refer to EIP-712 for the expected structure of [RPC method input parameters](./eip-712.md#parameters).
+**Note:** Client developers should refer to EIP-712 for complete semantics around [encoding and signing data](/web3/eip/eip712#specification). Dapp developers should refer to EIP-712 for the expected structure of [RPC method input parameters](/web3/eip/eip712#parameters).
 
 ##### Returns
 
-{[`Data`](#data)} - signature hash of the provided message
+&#123;[`Data`](#data)&#125; - signature hash of the provided message
 
 ##### Example
 
@@ -2077,12 +2077,12 @@ Submit a mining hashrate
 
 |#|Type|Description|
 |-|-|-|
-|1|{[`Data`](#data)}|hash rate|
-|2|{[`Data`](#data)}|random ID identifying this node|
+|1|&#123;[`Data`](#data)&#125;|hash rate|
+|2|&#123;[`Data`](#data)&#125;|random ID identifying this node|
 
 ##### Returns
 
-{`boolean`} - `true` if submitting went through successfully, `false` otherwise
+&#123;`boolean`&#125; - `true` if submitting went through successfully, `false` otherwise
 
 ##### Example
 
@@ -2117,13 +2117,13 @@ Submit a proof-of-work solution
 
 |#|Type|Description|
 |-|-|-|
-|1|{[`Data`](#data)}|nonce found|
-|2|{[`Data`](#data)}|header's pow-hash|
-|3|{[`Data`](#data)}|mix digest|
+|1|&#123;[`Data`](#data)&#125;|nonce found|
+|2|&#123;[`Data`](#data)&#125;|header's pow-hash|
+|3|&#123;[`Data`](#data)&#125;|mix digest|
 
 ##### Returns
 
-{`boolean`} - `true` if the provided solution is valid, `false` otherwise
+&#123;`boolean`&#125; - `true` if the provided solution is valid, `false` otherwise
 
 ##### Example
 
@@ -2163,9 +2163,9 @@ _(none)_
 
 {`boolean|object`} - `false` if this client is not syncing with the network, otherwise an object with the following members:
 
-- {[`Quantity`](#quantity)} `currentBlock` - number of the most-recent block synced
-- {[`Quantity`](#quantity)} `highestBlock` - number of latest block on the network
-- {[`Quantity`](#quantity)} `startingBlock` - block number at which syncing started
+- &#123;[`Quantity`](#quantity)&#125; `currentBlock` - number of the most-recent block synced
+- &#123;[`Quantity`](#quantity)&#125; `highestBlock` - number of latest block on the network
+- &#123;[`Quantity`](#quantity)&#125; `startingBlock` - block number at which syncing started
 
 ##### Example
 
@@ -2203,11 +2203,11 @@ Destroys a filter based on filter ID
 
 |#|Type|Description|
 |-|-|-|
-|1|{[`Quantity`](#quantity)}|ID of the filter to destroy|
+|1|&#123;[`Quantity`](#quantity)&#125;|ID of the filter to destroy|
 
 ##### Returns
 
-{`boolean`} - `true` if the filter is found and successfully destroyed or `false` if it is not
+&#123;`boolean`&#125; - `true` if the filter is found and successfully destroyed or `false` if it is not
 
 ##### Example
 
@@ -2251,4 +2251,4 @@ The current generation of Ethereum clients includes several implementations that
 
 ## Copyright
 
-Copyright and related rights waived via [CC0](../LICENSE.md).
+Copyright and related rights waived via [CC0](https://github.com/ethereum/EIPs/blob/master/LICENSE.md).
