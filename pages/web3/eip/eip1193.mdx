@@ -1,0 +1,499 @@
+---
+eip: 1193
+title: EIP-1193 - Ethereum 提供者 JavaScript API
+author: Fabian Vogelsteller (@frozeman), Ryan Ghods (@ryanio), Victor Maia (@MaiaVictor), Marc Garreau (@marcgarreau), Erik Marks (@rekmarks)
+discussions-to: https://github.com/ethereum/EIPs/issues/2319
+status: Final
+type: Standards Track
+category: Interface
+created: 2018-06-30
+requires: 155, 695
+---
+
+# EIP-1193 - Ethereum 提供者 JavaScript API
+原文 [EIP-1193: Ethereum Provider JavaScript API](https://eips.ethereum.org/EIPS/eip-1193)
+
+EIP1193是由Ethereum基金会起草的一个关于JavaScript Ethereum Provider API，用于在客户端和应用程序之间保持一致性。
+
+## 抽象 (Abstract)
+
+以太坊网络应用程序（“dapp”）生态系统中的一个常见约定是密钥管理软件（“钱包”）通过网页中的 JavaScript 对象公开其 API。该对象称为“提供者（`Provider`）”。
+
+从历史上看，`Provider` 实现在钱包之间表现出冲突的接口和行为。这个 EIP 正式化了一个以太坊提供者 API，以促进钱包的互操作性。
+
+API 被设计为最小的、事件驱动的，并且与传输和 RPC 协议无关。它的功能很容易通过定义新的 RPC 方法和`message`事件类型来扩展。
+
+从历史上看，提供程序`window.ethereum`已在 Web 浏览器中可用，但此约定不是规范的一部分。
+
+## 定义 (Definitions)
+
+- Provider （提供者）
+    一个可供消费者使用的 JavaScript 对象，它通过客户端提供对以太坊的访问。
+- Client （客户端）
+    从提供者接收远程过程调用 (RPC) 请求并返回其结果的端点。
+- Wallet (钱包)
+    管理私钥、执行签名操作并充当提供者和客户端之间的中间件的最终用户应用程序。
+- Remote Procedure Call (RPC) 远程过程调用 (RPC)
+    远程过程调用 (RPC) 是提交给提供者的任何请求，要求提供者、其电子钱包或其客户端处理某些过程。
+
+## 连接性 (Connectivity)
+
+当 `Provider`（提供者） 可以为至少一个链提供 RPC 请求时，就被称为“已连接（`connected`）”。
+
+当 `Provider`（提供者） 根本无法为任何链提供 RPC 请求时，它被称为“断开连接（`disconnected`）”。
+
+>要为 RPC 请求提供服务，提供者必须成功地将请求提交到远程位置，并收到响应。换句话说，如果 Provider 无法与其 Client 通信，例如由于网络问题，Provider 将断开连接。
+
+## 应用程序接口 (API)
+>`Provider API` 是使用 `TypeScript` 指定的。作者鼓励实现者声明他们自己的类型和接口，使用本节中的类型和接口作为基础。
+>有关面向消费者的 API 文档，请参阅[附录 I](#附录-i面向消费者的-api-文档)
+
+提供者必须实现并公开本节中定义的 API。所有 API 实体都必须遵守本节中定义的类型和接口。
+
+## 要求 (request)
+
+>该`request`方法旨在作为远程过程调用 (RPC) 的与传输和协议无关的包装函数。
+
+```typescript copy
+interface RequestArguments {
+  readonly method: string;
+  readonly params?: readonly unknown[] | object;
+}
+
+Provider.request(args: RequestArguments): Promise<unknown>;
+```
+提供者必须通过 的值来识别请求的 RPC 方法`RequestArguments.method`。
+
+如果请求的 RPC 方法采用任何参数，提供者必须接受它们作为 的值`RequestArguments.params`。
+
+必须处理RPC 请求，以便返回的 `Promise` 要么根据请求的 RPC 方法的规范解析为一个值，要么因错误而拒绝。
+
+如果已解决，则 `Promise`必须根据 RPC 方法的规范以结果解决。`Promise`不得使用任何特定于 RPC 协议的响应对象进行解析，除非 RPC 方法的返回类型是这样定义的。
+
+如果返回的 `Promise` 拒绝，它必须使用下面RPC 错误`ProviderRpcError`部分中指定的a 来拒绝。
+
+如果满足以下任何条件，则返回的 `Promise`必须拒绝：
+- RPC 请求返回错误。
+    + 如果返回的错误与接口兼容ProviderRpcError，Promise可以直接拒绝该错误。
+- 提供者遇到错误或由于任何原因无法处理请求。
+
+>如果 Provider 实现了任何类型的授权逻辑，作者建议4100在授权失败的情况下拒绝并返回错误。
+
+如果满足以下任何条件，则返回的 Promise应该拒绝：
+
+- 提供者已断开连接。
+    + 如果因为这个原因拒绝，Promise 拒绝错误code 必须是4900。
+- RPC 请求针对特定的链，Provider 不连接到该链，但连接到至少一个其他链。
+    + 如果因为这个原因拒绝，Promise 拒绝错误code 必须是4901。
+
+有关“已连接”和“已断开连接”的定义，请参阅[连接性](#连接性-connectivity)部分。
+
+### 支持的 RPC 方法
+“支持的 `RPC` 方法”是可以通过提供者调用的任何 `RPC` 方法。
+
+所有受支持的 `RPC` 方法必须由唯一的字符串标识。
+
+提供者可以支持实现其目的所需的任何 `RPC` 方法，无论是标准化的还是其他方式。
+
+如果不支持在最终 EIP 中定义的 `RPC` 方法，它应该`4200`根据下面的[提供者错误](#提供者错误-provider-errors)部分的错误被拒绝，或者根据 `RPC` 方法的规范适当的错误。
+
+#### `RPC` 错误
+```typescript copy
+interface ProviderRpcError extends Error {
+  code: number;
+  data?: unknown;
+}
+```
+- message
+    + 必须是人类可读的字符串
+    + 应该遵守下面错误标准部分的规范
+- code
+    + 必须是整数
+    + 应该遵守下面错误标准部分的规范
+- data
+     + 应该包含关于错误的任何其他有用信息
+
+#### 错误标准
+ProviderRpcError代码和消息应该按照优先顺序遵循这些约定：
+
+1. 下面Provider Errors部分的错误
+
+2. 错误的 RPC 方法规范规定的任何错误
+
+3. 状态CloseEvent码
+
+#### 提供者错误 (Provider Errors)
+| Status code | Name                  | Description                                                              |
+| ----------- | --------------------- | ------------------------------------------------------------------------ |
+| 4001        | User Rejected Request | 用户拒绝了请求。                                           |
+| 4100        | Unauthorized          | 请求的方法和/或帐户未被用户授权。 |
+| 4200        | Unsupported Method    | 提供者不支持请求的方法。                      |
+| 4900        | Disconnected          | 提供者 (Provider) 与所有链断开连接。                            |
+| 4901        | Chain Disconnected    | 提供者 (Provider) 未连接到请求的链。                    |
+
+>`4900`旨在指示提供者与所有链断开连接，而`4901`旨在指示提供者仅与特定链断开连接。换句话说，`4901`意味着提供者连接到其他链，而不是请求的链。
+
+### 事件 (Events)
+提供者必须实现以下事件处理方法：
+
+- on
+- removeListener
+
+这些方法必须根据 Node.js [EventEmitterAPI](https://nodejs.org/api/events.html)实现。
+>为了满足这些要求，提供者实施者应该考虑简单地扩展 Node.js`EventEmitter`类并将其捆绑到目标环境中。
+
+#### 信息 (message)
+>该`message`事件旨在用于其他事件未涵盖的任意通知。
+
+发射时，必须使用以下形式的对象参数发射`message`事件：
+```javascript copy
+interface ProviderMessage {
+  readonly type: string;
+  readonly data: unknown;
+}
+```
+#### 订阅 (Subscriptions)
+
+例如，如果提供者支持以太坊 RPC 订阅，则`eth_subscribe`提供者必须`message`在收到订阅通知时发出事件。
+如果提供者从订阅中接收到订阅消息`eth_subscribe`，提供者必须发出一个具有以下形式的对象的`message`事件：`ProviderMessage`
+
+```typescript copy
+interface EthSubscription extends ProviderMessage {
+  readonly type: 'eth_subscription';
+  readonly data: {
+    readonly subscription: string;
+    readonly result: unknown;
+  };
+}
+```
+
+#### 连接 (connectivity)
+
+有关“已连接”的定义，请参阅[连接性](#连接性-connectivity)部分。
+
+如果 `Provider` 已连接，`Provider`必须发出名为 的事件`connect`。
+
+这包括以下情况：
+
+- `Provider` 在初始化后首先连接到一条链上。
+- `disconnect` 提供者在事件发出后连接到链。
+
+此事件必须与以下形式的对象一起发出：
+
+```typescript copy
+interface ProviderConnectInfo {
+  readonly chainId: string;
+}
+````
+
+`chainId` **根据以太坊 `RPC` 方法**，必须将连接链的整数 `ID` 指定为十六进制字符串 `eth_chainId`。
+
+#### 断开连接 (disconnect)
+
+有关“断开连接”的定义，请参阅[连接性](#连接性-connectivity)部分。
+
+如果提供者与所有链断开连接，则提供者必须根据[RPC 错误](#rpc-错误) `disconnect` 部分中定义的接口发出以 `value`命名的事件。错误属性的值必须跟在 的状态代码之后。`error: ProviderRpcErrorcodeCloseEvent`
+
+### 切换链 (chainChanged)
+
+如果提供者连接到的链发生变化，提供者必须`chainChanged`发出以 `value`命名的事件`chainId: string`，根据以太坊 `RPC` 方法将新链的整数 `ID` 指定为十六进制字符串`eth_chainId`。
+
+### 切换钱包帐号 (accountsChanged)
+
+如果提供者可用的帐户发生变化，提供者必须`accountsChanged`发出以 `value`命名的事件`accounts: string[]`，其中包含每个以太坊 `RPC` 方法的帐户地址`eth_accounts`。
+
+当返回值发生变化时，“提供者可用的帐户”也会发生变化`eth_accounts`。
+
+
+## 基本原理 (Rationale)
+
+提供者的目的是为消费者提供对以太坊的访问。通常，提供者必须使以太坊 Web 应用程序能够做两件事：
+
+- 发出以太坊 `RPC` 请求
+- 响应提供商的以太坊链、客户端和钱包中的状态变化
+
+`Provider` `API` 规范由一个方法和五个事件组成。方法`request`和`message`事件本身就足以实现一个完整的 `Provider`。它们旨在分别发出任意 `RPC` 请求和传递任意消息。
+
+其余四个事件可以分为两类：
+
+- 更改提供者发出 `RPC` 请求的能力
+    + `connect`
+    + `disconnect`
+- 任何重要应用程序必须处理的常见客户端和/或钱包状态更改
+    + `chainChanged`
+    + `accountsChanged`
+
+由于在撰写本文时相关模式在生产中的广泛使用，因此包括了这些事件。
+
+## 向后兼容性 (Backwards Compatibility)
+
+许多提供商在最终确定之前采用了该规范的草案版本。当前的 `API` 被设计为遗留版本的严格超集，并且此规范在这个意义上是完全向后兼容的。有关遗留 `API`，请参阅[附录 III](#附录-iii旧版提供程序-api) 。
+
+仅实现此规范的提供商将不兼容以遗留 `API` 为目标的以太坊 Web 应用程序。
+
+## 实现 (Implementations)
+
+在撰写本文时，以下项目具有有效的实现：
+
+- [构建器.dev](https://github.com/nomiclabs/buidler/pull/608)
+- [以太坊.js](https://github.com/ethers-io/ethers.js/blob/56af4413b1dd1787db68985e0b612b63d86fdf7c/packages/providers/src.ts/web3-provider.ts)
+- [eth提供者](https://www.npmjs.com/package/eth-provider)
+- [元掩码](https://github.com/MetaMask/inpage-provider)
+- [钱包连接](https://github.com/WalletConnect/walletconnect-monorepo/blob/d33fd2070d7a67f74de50fd10ca4217f4e2f22f3/packages/providers/web3-provider/README.md)
+- [web3.js](https://web3js.readthedocs.io/)
+
+## 安全注意事项 (Security Considerations)
+
+Provider 旨在在以太坊客户端和以太坊应用程序之间传递消息。不负责私钥或账户管理；
+它仅处理 `RPC` 消息并发出事件。因此，账户安全和用户隐私需要在提供者和它的以太坊客户端之间的中间件中实现。
+在实践中，我们将这些中间件应用程序称为“钱包”，它们通常管理用户的私钥和帐户。`Provider` 可以被认为是 `Wallet` 的扩展，暴露在不受信任的环境中，在某些第三方（例如网站）的控制下。
+
+### 处理对抗行为 (Handling Adversarial Behavior)
+
+由于是`JavaScript`对象，消费者一般可以对`Provider`进行任意操作，它的所有属性都可以被读取或覆盖。
+因此，最好将 `Provider` 对象视为由对手控制。提供者实施者通过确保以下内容来保护用户、钱包和客户，这一点至关重要：
+
+- 提供者不包含任何私人用户数据。
+- `Provider` 和 `Wallet` 程序是相互隔离的。
+- 来自供应商的钱包和/或客户端速率限制请求。
+- 钱包和/或客户验证从提供商发送的所有数据。
+
+### 链变化 (Chain Changes)
+
+`eth_chainId`由于所有以太坊操作都针对特定链，因此根据以太坊 `RPC` 方法（请参阅[EIP-695](/web3/eip/eip695)），提供者准确反映客户端配置的链非常重要。
+
+这包括确保`eth_chainId`具有正确的返回值，并且`chainChanged`只要该值发生变化就会发出事件。
+
+### 用户帐户公开和帐户更改 (User Account Exposure and Account Changes)
+
+许多以太坊写入操作（例如`eth_sendTransaction`）需要指定用户帐户。提供者消费者通过 `RPC` 方法访问这些帐户`eth_accounts`，并监听`accountsChanged`事件。
+
+与一样，具有正确的返回值`eth_chainId`至关重要，并且只要该值发生变化就会触发事件。
+`eth_accounts` `accountsChanged`的返回值`eth_accounts`最终由钱包或客户端控制。
+为了保护用户隐私，作者建议默认不暴露任何账户。
+相反，提供者应该支持 `RPC` 方法来明确请求帐户访问，例如`eth_requestAccounts`（参考[EIP-1102](/web3/eip/eip1102)）或`wallet_requestPermissions`（参考[EIP-2255](/web3/eip/eip2255)）。
+
+## 参考 (References)
+
+- [初步讨论于`ethereum`/`interfaces`](https://github.com/ethereum/interfaces/issues/16)
+- [已弃用的 `Ethereum Magicians` 线程](https://ethereum-magicians.org/t/eip-1193-ethereum-provider-javascript-api/640)
+- [继续讨论](https://github.com/ethereum/EIPs/issues/2319)
+- 相关EIP
+    + [EIP-1102：选择加入账户曝光 (Opt-in Account Exposure)](/web3/eip/eip1102)
+    + [EIP-1474：远程过程调用规范 (Remote Procedure Call Specification)](/web3/eip/eip1474)
+    + [EIP-1767：以太坊节点数据的 GraphQL 接口 (GraphQL Interface to Ethereum Node Data)](/web3/eip/eip1767)
+    + [EIP-2255：钱包权限 (Wallet Permissions)](/web3/eip/eip2255)
+
+## [原文版权 (Copyright)](https://eips.ethereum.org/EIPS/eip-1193#copyright)
+[通过CC0](https://eips.ethereum.org/LICENSE)放弃版权和相关权利。
+
+----
+## 附录 I：面向消费者的 API 文档 (Appendix I: Consumer-Facing API Documentation)
+
+### request
+进行以太坊 `RPC` 方法调用。
+```typescript copy
+interface RequestArguments {
+  readonly method: string;
+  readonly params?: readonly unknown[] | object;
+}
+
+Provider.request(args: RequestArguments): Promise<unknown>;
+```
+返回的 `Promise` 使用方法的结果解析或拒绝使用`ProviderRpcError`. 例如：
+```typescript copy
+Provider.request({ method: 'eth_accounts' })
+  .then((accounts) => console.log(accounts))
+  .catch((error) => console.error(error));
+```
+请查阅每个 `Ethereum RPC` 方法的文档以了解其`params`返回类型。您可以在此处找到常用方法的列表。
+
+### RPC Protocols
+可能有多个 RPC 协议可用。有关示例，请参阅：
+- [EIP-1474](/web3/eip/eip1474)，以太坊 JSON-RPC API
+- [EIP-1767](/web3/eip/eip1767)，以太坊 GraphQL 架构
+
+### 事件 (Events)
+事件遵循 `Node.js` [EventEmitterAPI](https://nodejs.org/api/events.html)的约定。
+
+### 连接 (connect)
+`Provider` 在以下情况下发出`connect`：
+- 初始化后首先连接到链。
+- `disconnect`在事件发出后，首先连接到链。
+```typescript copy
+interface ProviderConnectInfo {
+  readonly chainId: string;
+}
+
+Provider.on('connect', listener: (connectInfo: ProviderConnectInfo) => void): Provider;
+```
+`chainId`该事件根据`Ethereum RPC` 方法发出一个带有十六进制字符串的对象`eth_chainId`，以及由提供者确定的其他属性。
+
+### 断开 (disconnect)
+在`Provider`与所有链断开连接`disconnect`时发出。
+```typescript copy
+Provider.on('disconnect', listener: (error: ProviderRpcError) => void): Provider;
+
+```
+此事件发出一个`ProviderRpcError`. 错误`code`遵循`CloseEvent`[状态代码表](https://developer.mozilla.org/zh-CN/docs/Web/API/CloseEvent)。
+
+### 切换链 (chainChanged)
+`Provider` `chainChanged`在连接到新链时发出。
+```typescript copy
+Provider.on('chainChanged', listener: (chainId: string) => void): Provider;
+```
+`chainId`该事件根据`eth_chainId` `Ethereum RPC` 方法发出一个十六进制字符串。
+
+### 切换钱包帐号 (accountsChanged)
+在`Provider` 从(`eth_accounts`) 切换钱包帐号`accountsChanged`返回的帐户更改时发出。
+```typescript copy
+Provider.on('accountsChanged', listener: (accounts: string[]) => void): Provider;
+```
+根据以太坊 RPC 方法，该事件发出`accounts`一个帐户地址数组。(`eth_accounts`)
+
+### message (信息)
+提供者发出`message`以向消费者传达任意消息。消息可能包括 JSON-RPC 通知、GraphQL 订阅和/或提供者定义的任何其他事件。
+```typescript copy
+interface ProviderMessage {
+  readonly type: string;
+  readonly data: unknown;
+}
+
+Provider.on('message', listener: (message: ProviderMessage) => void): Provider;
+```
+### 订阅 (Subscriptions)
+
+eth_订阅方法和shh_订阅方法依赖于此事件来发出订阅更新。
+
+例如eth_subscribe订阅更新，ProviderMessage.type将等于字符串'eth_subscription'，订阅数据将是值ProviderMessage.data。
+
+### 错误 (Error)
+```typescript copy
+interface ProviderRpcError extends Error {
+  message: string;
+  code: number;
+  data?: unknown;
+}
+```
+
+## 附录 II：示例
+```typescript copy
+// 大多数提供者在页面加载时都可以作为 window.ethereum 使用。
+// 这只是约定俗成，并非标准，实际中未必如此。
+// 请查阅 Provider 实现的文档。
+const ethereum = window.ethereum;
+
+// 示例 1：记录 chainId
+ethereum
+  .request({ method: 'eth_chainId' })
+  .then((chainId) => {
+    console.log(`hexadecimal string: ${chainId}`);
+    console.log(`decimal number: ${parseInt(chainId, 16)}`);
+  })
+  .catch((error) => {
+    console.error(`Error fetching chainId: ${error.code}: ${error.message}`);
+  });
+
+// 示例 2：记录最后一个块
+ethereum
+  .request({
+    method: 'eth_getBlockByNumber',
+    params: ['latest', true],
+  })
+  .then((block) => {
+    console.log(`Block ${block.number}:`, block);
+  })
+  .catch((error) => {
+    console.error(
+      `Error fetching last block: ${error.message}.
+       Code: ${error.code}. Data: ${error.data}`
+    );
+  });
+
+// 示例 3：记录可用帐户
+ethereum
+  .request({ method: 'eth_accounts' })
+  .then((accounts) => {
+    console.log(`Accounts:\n${accounts.join('\n')}`);
+  })
+  .catch((error) => {
+    console.error(
+      `Error fetching accounts: ${error.message}.
+       Code: ${error.code}. Data: ${error.data}`
+    );
+  });
+
+// 示例 4：记录新块
+ethereum
+  .request({
+    method: 'eth_subscribe',
+    params: ['newHeads'],
+  })
+  .then((subscriptionId) => {
+    ethereum.on('message', (message) => {
+      if (message.type === 'eth_subscription') {
+        const { data } = message;
+        if (data.subscription === subscriptionId) {
+          if ('result' in data && typeof data.result === 'object') {
+            const block = data.result;
+            console.log(`New block ${block.number}:`, block);
+          } else {
+            console.error(`Something went wrong: ${data.result}`);
+          }
+        }
+      }
+    });
+  })
+  .catch((error) => {
+    console.error(
+      `Error making newHeads subscription: ${error.message}.
+       Code: ${error.code}. Data: ${error.data}`
+    );
+  });
+
+// 示例 5：在帐户更改时记录
+const logAccounts = (accounts) => {
+  console.log(`Accounts:\n${accounts.join('\n')}`);
+};
+ethereum.on('accountsChanged', logAccounts);
+// to unsubscribe
+ethereum.removeListener('accountsChanged', logAccounts);
+
+// 示例 6：记录连接是否结束
+ethereum.on('disconnect', (code, reason) => {
+  console.log(`Ethereum Provider connection closed: ${reason}. Code: ${code}`);
+});
+```
+
+## <span id="appendix3">附录 III：旧版提供程序 API</span>
+本节记录遗留的 Provider API，在撰写本文时它已广泛用于生产环境。由于它从未完全标准化，因此在实践中会出现重大偏差。作者建议不要实施它，除非是为了支持遗留的以太坊应用程序。
+### 发送异步（已弃用）
+
+此方法已被取代`request`。
+
+`sendAsync`类似于`request`，但带有 `JSON-RPC` 对象和回调。
+```typescript copy
+Provider.sendAsync(request: Object, callback: Function): void;
+```
+历史上，请求和响应对象接口一直遵循以太坊 [JSON-RPC 规范](/web3/eip/eip1474)。
+
+### 发送（弃用）
+此方法已被取代`request`。
+```typescript copy
+Provider.send(...args: unknown[]): unknown;
+```
+
+## 遗产事件
+### 关闭（弃用）
+此事件由 取代`disconnect`。
+
+### 网络已更改（已弃用）
+该事件`networkChanged`被取代`chainChanged`。
+
+详情参考[EIP-155：简单重放攻击保护](/web3/eip/eip155)和[EIP-695：为 JSON-RPC 创建 eth_chainId 方法](/web3/eip/eip695)。
+
+### 通知（弃用）
+此事件由 取代`message`。
+
+从历史上看，此事件已通过例如`eth_subscribe`表单的订阅更新发出`{ subscription: string, result: unknown }`。
+
