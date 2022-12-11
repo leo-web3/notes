@@ -1,6 +1,6 @@
 ---
 eip: 1474
-title: EIP-1474:Remote procedure call specification
+title: EIP-1474 - 远程发送请求调用规范(Remote procedure call specification)
 author: Paul Bouchon <mail@bitpshr.net>, Erik Marks (@rekmarks)
 discussions-to: https://ethereum-magicians.org/t/eip-remote-procedure-call-specification/1537
 status: Stagnant
@@ -9,29 +9,33 @@ category: Interface
 created: 2018-10-02
 ---
 
-## Simple Summary
+## 简单总结 (Simple Summary)
 
-This proposal defines a standard set of remote procedure call methods that an Ethereum node should implement.
+该提案定义了 `Ethereum Nodes` 应实现的一组标准远程过程调用方法。
 
-## Abstract
+## 抽象 (Abstract)
 
-Nodes created by the current generation of Ethereum clients expose inconsistent and incompatible remote procedure call (RPC) methods because no formal Ethereum RPC specification exists. This proposal standardizes such a specification to provide developers with a predictable Ethereum RPC interface regardless of underlying node implementation.
+由于不存在正式的 `Ethereum RPC` 规范, 第一代 `Ethereum Clients` 创建的节点暴露了不一致和不兼容的远程过程调用 (RPC) 方法。 
 
-## Specification
+该提案将此类规范标准化, 为开发人员提供可预测的 `Ethereum RPC` 接口，而无需了解底层节点如何实现。
 
-### Concepts
+## 规范 (Specification)
+
+### 概念 (Concepts)
 
 #### RFC-2119
 
-The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED",  "MAY", and "OPTIONAL" in this document are to be interpreted as described in [RFC-2119](https://www.ietf.org/rfc/rfc2119.txt).
+本文档中的关键词“必须”、“不得”、“必需”、“应”、“不应”、“应该”、“不应”、“推荐”、“可以”和“可选” 按照 [RFC-2119](https://www.ietf.org/rfc/rfc2119.txt) 中的描述进行解释。
 
 #### JSON-RPC
 
-Communication with Ethereum nodes is accomplished using [JSON-RPC](https://www.jsonrpc.org/specification), a stateless, lightweight [remote procedure call](https://en.wikipedia.org/wiki/Remote_procedure_call) protocol that uses [JSON](http://www.json.org/) as its data format. Ethereum RPC methods **MUST** be called using [JSON-RPC request objects](https://www.jsonrpc.org/specification#request_object) and **MUST** respond with [JSON-RPC response objects](https://www.jsonrpc.org/specification#response_object).
+与以太坊节点的通信是使用 [JSON-RPC](https://www.jsonrpc.org/specification) 完成的，这是一种无状态、轻量级的 [远程过程调用](https://en.wikipedia.org/wiki/Remote_procedure_call) 使用 [JSON](http://www.json.org/) 作为其数据格式的协议。 
+
+`Ethereum RPC` 方法**必须**使用 [JSON-RPC 请求对象](https://www.jsonrpc.org/specification#request_object) 调用并且**必须**使用 [JSON-RPC 响应对象](https://www.jsonrpc.org/specification#response_object)。
 
 #### Error codes
 
-If an Ethereum RPC method encounters an error, the `error` member included on the response object **MUST** be an object containing a `code` member and descriptive `message` member. The following list contains all possible error codes and associated messages:
+如果以太坊 RPC 方法遇到错误，响应对象中包含的“错误”成员**必须**是一个包含“代码”成员和描述性“消息”成员的对象。 以下列表包含所有可能的错误代码和相关消息：
 
 |Code|Message|Meaning|Category|
 |-|-|-|-|
@@ -63,7 +67,7 @@ Example error response:
 
 #### Value encoding
 
-Specific types of values passed to and returned from Ethereum RPC methods require special encoding:
+传递给以太坊 RPC 方法并从中返回的特定类型的值需要特殊编码：
 
 ##### `Quantity`
 
@@ -94,7 +98,7 @@ The RPC methods below take a default block identifier as a parameter.
 - `eth_call`
 - `eth_getProof`
 
-Since there is no way to clearly distinguish between a `Data` parameter and a `Quantity` parameter, [EIP-1898](/web3/eip/eip1898) provides a format to specify a block either using the block hash or block number. The block identifier is a JSON `object` with the following fields:
+由于无法明确区分“Data”参数和“Quantity”参数，[EIP-1898](/web3/eip/eip1898) 提供了一种使用区块哈希或区块编号指定区块的格式。 块标识符是一个具有以下字段的 JSON 对象：
 
 |Property|Type|Description|
 |-|-|-|
@@ -102,7 +106,8 @@ Since there is no way to clearly distinguish between a `Data` parameter and a `Q
 |OR `[blockHash]`|&#123;[`Data`](#data)&#125;|The block uniquely identified by this hash. The `blockNumber` and `blockHash` properties are mutually exclusive; exactly one of them must be set.|
 |`requireCanonical`|&#123;`boolean`&#125;|(optional) Whether or not to throw an error if the block is not in the canonical chain as described below. Only allowed in conjunction with the `blockHash` tag. Defaults to `false`.|
 
-If the block is not found, the callee SHOULD raise a JSON-RPC error (the recommended error code is `-32001: Resource not found`. If the tag is `blockHash` and `requireCanonical` is `true`, the callee SHOULD additionally raise a JSON-RPC error if the block is not in the canonical chain (the recommended error code is `-32000: Invalid input` and in any case should be different than the error code for the block not found case so that the caller can distinguish the cases). The block-not-found check SHOULD take precedence over the block-is-canonical check, so that if the block is not found the callee raises block-not-found rather than block-not-canonical.
+如果没有找到块，被调用者应该抛出一个 JSON-RPC 错误（推荐的错误代码是 `-32001: Resource not found`。如果标签是 `blockHash` 并且 `requireCanonical` 是 `true`，被调用者应该 如果该块不在规范链中，还会引发 JSON-RPC 错误（推荐的错误代码为“-32000：无效输入”，并且在任何情况下都应与未找到块的错误代码不同，以便调用者 可以区分情况)。
+block-not-found 检查应该优先于 block-is-canonical 检查，这样如果没有找到块，被调用者会引发 block-not-found 而不是 block-not-canonical。
 
 ##### `Data`
 
@@ -124,7 +129,7 @@ Examples `Data` values:
 
 ##### Proposing changes
 
-New Ethereum RPC methods and changes to existing methods **MUST** be proposed via the traditional EIP process. This allows for community consensus around new method implementations and proposed method modifications. RPC method proposals **MUST** reach "draft" status before being added to this proposal and the official Ethereum RPC specification defined herein.
+新的以太坊 RPC 方法和对现有方法的更改**必须**通过传统的 EIP 流程提出。 这允许围绕新方法实现和提议的方法修改达成社区共识。 RPC 方法提案**必须**在添加到此提案和此处定义的官方以太坊 RPC 规范之前达到“草案”状态。
 
 ### Methods
 
@@ -132,7 +137,7 @@ New Ethereum RPC methods and changes to existing methods **MUST** be proposed vi
 
 ##### Description
 
-Returns the version of the current client
+返回当前客户端的版本
 
 ##### Parameters
 
@@ -202,7 +207,7 @@ curl -X POST --data '{
 
 ##### Description
 
-Determines if this client is listening for new network connections
+确定此客户端是否正在侦听新的网络连接
 
 ##### Parameters
 
@@ -236,7 +241,7 @@ curl -X POST --data '{
 
 ##### Description
 
-Returns the number of peers currently connected to this client
+返回当前连接到此客户端的对等点数
 
 ##### Parameters
 
@@ -269,7 +274,7 @@ curl -X POST --data '{
 
 ##### Description
 
-Returns the chain ID associated with the current network
+返回与当前网络关联的链 ID
 
 ##### Parameters
 
@@ -346,7 +351,7 @@ curl -X POST --data '{
 
 ##### Description
 
-Returns the number of the most recent block seen by this client
+返回此客户端看到的最新块的编号
 
 ##### Parameters
 
@@ -380,7 +385,7 @@ curl -X POST --data '{
 
 ##### Description
 
-Executes a new message call immediately without submitting a transaction to the network
+立即执行新的消息调用而不向网络提交交易
 
 ##### Parameters
 
@@ -1858,7 +1863,7 @@ curl -X POST --data '{
 
 ##### Description
 
-Creates, signs, and sends a new transaction to the network
+创建、签署并向网络发送新交易
 
 ##### Parameters
 
@@ -1901,7 +1906,7 @@ curl -X POST --data '{
 
 ##### Description
 
-Calculates an Ethereum-specific signature in the form of `keccak256("\x19Ethereum Signed Message:\n" + len(message) + message))`
+以 `keccak256("\x19Ethereum Signed Message:\n" + len(message) + message))` 的形式计算以太坊特定的签名
 
 ##### Parameters
 
@@ -1938,7 +1943,7 @@ curl -X POST --data '{
 
 ##### Description
 
-Signs a transaction that can be submitted to the network at a later time using with `eth_sendRawTransaction`
+使用 `eth_sendRawTransaction` 签署可以在稍后提交到网络的交易
 
 ##### Parameters
 
@@ -1981,7 +1986,7 @@ curl -X POST --data '{
 
 ##### Description
 
-Calculates an Ethereum-specific signature in the form of `keccak256("\x19Ethereum Signed Message:\n" + len(message) + message))`
+以 `keccak256("\x19Ethereum Signed Message:\n" + len(message) + message))` 的形式计算以太坊特定的签名
 
 ##### Parameters
 
@@ -1990,7 +1995,8 @@ Calculates an Ethereum-specific signature in the form of `keccak256("\x19Ethereu
 |1|&#123;[`Data`](#data)&#125;|address to use for signing|
 |2|&#123;[`Data`](#data)&#125;|message to sign containing type information, a domain separator, and data|
 
-**Note:** Client developers should refer to EIP-712 for complete semantics around [encoding and signing data](/web3/eip/eip712#specification). Dapp developers should refer to EIP-712 for the expected structure of [RPC method input parameters](/web3/eip/eip712#parameters).
+**注意：**客户端开发人员应参考 EIP-712 以了解有关 [编码和签名数据](/web3/eip/eip-712#specification) 的完整语义。 
+Dapp 开发者应参考 EIP-712 [RPC 方法输入参数](/web3/eip/eip-712#parameters) 的预期结构。
 
 ##### Returns
 
@@ -2195,9 +2201,9 @@ curl -X POST --data '{
 
 ##### Description
 
-Destroys a filter based on filter ID
+根据过滤器 ID 销毁过滤器
 
-**Note:** This should only be called if a filter and its notifications are no longer needed. This will also be called automatically on a filter if its notifications are not retrieved using `eth_getFilterChanges` for a period of time.
+**注意：**只有在不再需要过滤器及其通知时才应调用它。 如果在一段时间内未使用“eth_getFilterChanges”检索过滤器的通知，这也会在过滤器上自动调用。
 
 ##### Parameters
 
@@ -2229,19 +2235,19 @@ curl -X POST --data '{
 ```
 ---
 
-## Rationale
+## 理由 (Rationale)
 
-Much of Ethereum's effectiveness as an enterprise-grade application platform depends on its ability to provide a reliable and predictable developer experience. Nodes created by the current generation of Ethereum clients expose RPC endpoints with differing method signatures; this forces applications to work around method inconsistencies to maintain compatibility with various Ethereum RPC implementations.
+以太坊作为企业级应用程序平台的有效性在很大程度上取决于其提供可靠且可预测的开发人员体验的能力。 当前一代以太坊客户端创建的节点公开具有不同方法签名的 RPC 端点； 这迫使应用程序解决方法不一致的问题，以保持与各种以太坊 RPC 实现的兼容性。
 
-Both Ethereum client developers and downstream dapp developers lack a formal Ethereum RPC specification. This proposal standardizes such a specification in a way that's versionable and modifiable through the traditional EIP process.
+以太坊客户端开发者和下游 dapp 开发者都缺乏正式的以太坊 RPC 规范。 该提案以一种可通过传统 EIP 流程进行版本控制和修改的方式对此类规范进行了标准化。
 
-## Backwards compatibility
+## 向后兼容性 (Backwards compatibility)
 
-This proposal impacts Ethereum client developers by requiring that any exposed RPC interface adheres to this specification. This proposal impacts dapp developers by requiring that any RPC calls currently used in applications are made according to this specification.
+该提案要求任何公开的 RPC 接口都遵守该规范，从而影响以太坊客户端开发人员。 该提案要求应用程序中当前使用的任何 RPC 调用都根据该规范进行，从而影响 dapp 开发人员。
 
-## Implementation
+## 执行 (Implementation)
 
-The current generation of Ethereum clients includes several implementations that attempt to expose this RPC specification:
+当前一代的以太坊客户端包括几个试图公开此 RPC 规范的实现：
 
 |Client Name|Language|Homepage|
 |-|-|-|
@@ -2249,6 +2255,6 @@ The current generation of Ethereum clients includes several implementations that
 |Parity|Rust|[parity.io/ethereum](https://parity.io/ethereum)|
 |Aleth|C++|[cpp-ethereum.org](https://cpp-ethereum.org)|
 
-## Copyright
+## 版权所有 (Copyright)
 
-Copyright and related rights waived via [CC0](https://github.com/ethereum/EIPs/blob/master/LICENSE.md).
+通过 [CC0](https://github.com/ethereum/EIPs/blob/master/LICENSE.md) 放弃版权和相关权利。
