@@ -27,15 +27,15 @@ requires: 155, 695
 
 原文 [`EIP-1193: Ethereum Provider JavaScript API`][Source-EIP-1193]
 
-EIP-1193是由Ethereum基金会起草的一个关于 `JavaScript Ethereum Provider API` ,用于在客户端和应用程序之间保持一致性。
+EIP-1193是由`Ethereum`基金会起草的一个关于 `JavaScript Ethereum Provider API` ,用于在客户端和应用程序之间保持一致性。
 
 ## 抽象 (`Abstract`)
 
-Ethereum网络应用程序“(`dapp`)”生态系统中的一个常见约定是密钥管理软件 “钱包(`Wallet`)” 通过网页中的 `JavaScript` 对象公开其 API。该对象称为“提供者(`Provider`)”。
+`Ethereum`网络应用程序“(`dapp`)”生态系统中的一个常见约定是密钥管理软件 “钱包(`Wallet`)” 通过网页中的 `JavaScript` 对象公开其 API。该对象称为“提供者(`Provider`)”。
 
 从历史上看,提供者(`Provider`) 实现在钱包之间表现出冲突的接口和行为。这个 EIP 正式规范化了一个 `Ethereum` 提供者(`Provider`) API,以促进钱包的规范操作性。
 
-API 被设计为最小的、事件驱动的,并且与传输和 RPC 协议无关。它的功能很容易通过定义新的 `RPC` 方法和 `message` 事件类型来扩展。
+API 被设计为最小的、事件驱动的,并且与传输和 `RPC` 协议无关。它的功能很容易通过定义新的 `RPC` 方法和 `message` 事件类型来扩展。
 
 从历史上看,提供程序 `window.ethereum` 已在 Web 浏览器中可用,但此约定不是规范的一部分。
 
@@ -44,13 +44,13 @@ API 被设计为最小的、事件驱动的,并且与传输和 RPC 协议无关�
 本节是非规范的。
 
 -  提供者 (`Provider`)
-    一个可供消费者使用的 `JavaScript` 对象,它通过客户端提供对 `Ethereum` 的访问。
+  + 一个可供消费者使用的 `JavaScript` 对象,它通过客户端提供对 `Ethereum` 的访问。
 -  客户端 (`Client`)
-    从 提供者(`Provider`)接收远程过程调用 (RPC) 请求并返回其结果的端点。
+  + 从 提供者(`Provider`)接收远程过程调用 (RPC) 请求并返回其结果的端点。
 -  钱包 (`Wallet`)
-    管理私钥(`private keys`)、执行签名(`signing`)操作并充当 提供者(`Provider`)和客户端(`Client`)之间的中间件的最终用户应用程序。
+  + 管理私钥(`private keys`)、执行签名(`signing`)操作并充当 提供者(`Provider`)和客户端(`Client`)之间的中间件的最终用户应用程序。
 - 远程过程调用 (RPC) (`Remote Procedure Call (RPC)`)
-    远程过程调用 (RPC) 是提交给 提供者(`Provider`)的任何请求,要求 提供者(`Provider`)、其电子钱包或其客户端处理某些过程。
+  + 远程过程调用 (RPC) 是提交给 提供者(`Provider`)的任何请求,要求 提供者(`Provider`)、其电子钱包或其客户端处理某些过程。
 
 ## 连接性 (`Connectivity`)
 
@@ -231,11 +231,11 @@ interface ProviderConnectInfo {
 
 ### 切换链 (`chainChanged`)
 
-如果 提供者(`Provider`) 连接的链发生变化, 提供者(`Provider`)**必须**发出名为 `chainChanged` 的事件,其值为 `chainId: string`,根据 `eth_chainId` `Ethereum` `RPC` 方法,将新链的整数 `ID` 指定为十六进制字符串。
+如果 提供者(`Provider`) 连接的链发生变化, 提供者(`Provider`)**必须**发出名为 `chainChanged` 的事件,其值为 `chainId: string`,根据 `eth_chainId` `Ethereum RPC` 方法,将新链的整数 `ID` 指定为十六进制字符串。
 
 ### 切换钱包帐号 (accountsChanged)
 
-如果 提供者(`Provider`) 活跃的钱包账户发生变化, 提供者(`Provider`)**必须**发出名为 `accountsChanged` 的事件,其值为 `accounts: string[]`,其中包含每个 `eth_accounts` Ethereum `RPC` 方法的账户地址。
+如果 提供者(`Provider`) 活跃的钱包账户发生变化, 提供者(`Provider`)**必须**发出名为 `accountsChanged` 的事件,其值为 `accounts: string[]`,其中包含每个 `eth_accounts` `Ethereum RPC` 方法的账户地址。
 
 当 `eth_accounts` 的返回值改变时,“提供者可用账户(`Provider available accounts`)”也会改变。
 
