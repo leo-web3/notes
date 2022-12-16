@@ -27,30 +27,30 @@ requires: 155, 695
 
 原文 [`EIP-1193: Ethereum Provider JavaScript API`][Source-EIP-1193]
 
-EIP-1193是由`Ethereum`基金会起草的一个关于 `JavaScript Ethereum Provider API` ,用于在客户端和应用程序之间保持一致性。
+EIP-1193是由 `Ethereum` 基金会起草的一个关于 `JavaScript Ethereum Provider API` ,用于在客户端(`Client`)和应用程序(`dapp`)之间保持一致性。
 
 ## 抽象 (`Abstract`)
 
-`Ethereum`网络应用程序“(`dapp`)”生态系统中的一个常见约定是密钥管理软件 “钱包(`Wallet`)” 通过网页中的 `JavaScript` 对象公开其 API。该对象称为“提供者(`Provider`)”。
+`Ethereum` 网络应用程序“(`dapp`)”生态系统中的一个常见约定是密钥管理软件 “钱包(`Wallet`)” 通过网页中的 `JavaScript` 对象公开其 API。该对象称为“提供者(`Provider`)”。
 
-从历史上看,提供者(`Provider`) 实现在钱包之间表现出冲突的接口和行为。这个 EIP 正式规范化了一个 `Ethereum` 提供者(`Provider`) API,以促进钱包的规范操作性。
+从历史上看,提供者(`Provider`) 实现在钱包之间表现出冲突的接口和行为。这个 `EIP` 正式规范化了一个 `Ethereum` 提供者(`Provider`) API,以促进钱包的规范操作性。
 
-API 被设计为最小的、事件驱动的,并且与传输和 `RPC` 协议无关。它的功能很容易通过定义新的 `RPC` 方法和 `message` 事件类型来扩展。
+`API` 被设计为最小的、事件驱动的,并且与传输和 `RPC` 协议无关。它的功能很容易通过定义新的 `RPC` 方法和 `message` 事件类型来扩展。
 
-从历史上看,提供程序 `window.ethereum` 已在 Web 浏览器中可用,但此约定不是规范的一部分。
+从历史上看,提供程序 `window.ethereum` 已在 Web 浏览器中可用,但此约定不是此规范的一部分。
 
 ## 定义 (`Definitions`)
 
 本节是非规范的。
 
 -  提供者 (`Provider`)
-  + 一个可供消费者使用的 `JavaScript` 对象,它通过客户端提供对 `Ethereum` 的访问。
+    + 一个可供消费者使用的 `JavaScript` 对象,它通过客户端提供对 `Ethereum` 的访问。
 -  客户端 (`Client`)
-  + 从 提供者(`Provider`)接收远程过程调用 (RPC) 请求并返回其结果的端点。
+    + 从 提供者(`Provider`)接收远程过程调用 (RPC) 请求并返回其结果的端点。
 -  钱包 (`Wallet`)
-  + 管理私钥(`private keys`)、执行签名(`signing`)操作并充当 提供者(`Provider`)和客户端(`Client`)之间的中间件的最终用户应用程序。
+    + 管理私钥(`private keys`)、执行签名(`signing`)操作并充当 提供者(`Provider`)和客户端(`Client`)之间的中间件的最终用户应用程序。
 - 远程过程调用 (RPC) (`Remote Procedure Call (RPC)`)
-  + 远程过程调用 (RPC) 是提交给 提供者(`Provider`)的任何请求,要求 提供者(`Provider`)、其电子钱包或其客户端处理某些过程。
+    + 远程过程调用 (RPC) 是提交给 提供者(`Provider`)的任何请求,要求 提供者(`Provider`)、其电子钱包或其客户端处理某些过程。
 
 ## 连接性 (`Connectivity`)
 
@@ -68,9 +68,9 @@ API 被设计为最小的、事件驱动的,并且与传输和 `RPC` 协议无�
 >
 >作者鼓励实现者声明他们自己的类型和接口,使用本节中的类型和接口作为基础。
 >
->有关面向消费者的 API 文档,请参阅[附录 I](#附录-i面向消费者的-api-文档)
+>有关面向消费者的 API 文档,请参阅 [附录-i 面向消费者的 api](#附录-i面向消费者的-api-文档-appendix-i-consumer-facing-api-documentation)
 
- 提供者(`Provider`)**必须**实现并公开本节中定义的 API。所有 API 实体都**必须**遵守本节中定义的类型和接口。
+ 提供者(`Provider`)**必须**实现并公开本节中定义的 `API`。所有 `API` 实体都**必须**遵守本节中定义的类型和接口。
 
 ## 请求 (`request`)
 
@@ -85,13 +85,13 @@ interface RequestArguments {
 Provider.request(args: RequestArguments): Promise<unknown>;
 ```
 
-提供者(`Provider`)必须通过 `RequestArguments.method` 的值来识别请求的 RPC 方法。
+提供者(`Provider`)必须通过 `RequestArguments.method` 的值来识别请求的 `RPC` 方法。
 
-如果请求的 `RPC` 方法采用任何参数, 提供者(`Provider`)**必须**接受它们作为`RequestArguments.params`的值。
+如果请求的 `RPC` 方法采用任何参数, 提供者(`Provider`)**必须**接受它们作为 `RequestArguments.params` 的值。
 
-**必须**处理`RPC` 请求,以便返回的 `Promise` 要么根据请求的 `RPC` 方法的规范解析为一个值,要么因错误而拒绝。
+**必须**处理 `RPC` 请求,以便返回的 `Promise` 要么根据请求的 `RPC` 方法的规范解析为一个值,要么因错误而拒绝。
 
-如果已解决,则 `Promise`**必须**根据 `RPC` 方法的规范以结果解决。`Promise`不得使用任何特定于 `RPC` 协议的响应对象进行解析,除非 `RPC` 方法的返回类型是这样定义的。
+如果已解决,则 `Promise`**必须**根据 `RPC` 方法的规范以结果解决。`Promise` 不得使用任何特定于 `RPC` 协议的响应对象进行解析,除非 `RPC` 方法的返回类型是这样定义的。
 
 如果返回的 `Promise` 拒绝,它**必须**按照下面 [`RPC Errors (RPC 错误)`](#rpc-错误-rpc-errors)部分中指定的 `ProviderRpcError` 拒绝。
 
@@ -99,7 +99,7 @@ Provider.request(args: RequestArguments): Promise<unknown>;
 
 - `RPC` 请求返回错误。
   + 如果返回的错误与 `ProviderRpcError` 接口兼容, `Promise` 可以直接拒绝该错误。
--  提供者(`Provider`)遇到错误或由于任何原因无法处理请求。
+-  提供者(`Provider`) 遇到错误或由于任何原因无法处理请求。
 
 >如果 提供者(`Provider`) 实现了任何类型的授权逻辑,作者建议在授权失败的情况下拒绝并返回 `4100` 错误。
 
@@ -112,15 +112,15 @@ Provider.request(args: RequestArguments): Promise<unknown>;
 
 有关“已连接(`connected`)”和“已断开连接(`disconnected`)”的定义,请参阅[连接性 (connectivity)](#连接性-connectivity)部分。
 
-### 支持的 RPC 方法 (`Supported RPC Methods`)
+### 支持的RPC方法 (`Supported RPC Methods`)
 
-“支持的 `RPC` 方法”是可以通过 提供者(`Provider`)调用的任何 `RPC` 方法。
+“支持的RPC方法(`Supported RPC Methods`)”是可以通过 提供者(`Provider`) 调用的任何 `RPC` 方法。
 
 所有受支持的 `RPC` 方法**必须**由唯一的字符串标识。
 
 提供者(`Provider`) 可以支持实现其目的所需的任何 `RPC` 方法,无论是标准化的还是其他方式。
 
-如果不支持在最终 EIP 中定义的 `RPC` 方法,它应该根据下面的[提供者错误(`Provider Errors`)](#提供者错误-provider-errors)部分的错误返回状态码`4200`拒绝,或者根据 `RPC` 方法的规范适当的错误返回。
+如果不支持在最终 `EIP` 中定义的 `RPC` 方法,它应该根据下面的[提供者错误(`Provider Errors`)](#提供者错误-provider-errors)部分的错误返回状态码`4200`拒绝,或者根据 `RPC` 方法的规范适当的错误返回。
 
 #### RPC 错误 (`RPC Errors`)
 
@@ -143,11 +143,11 @@ interface ProviderRpcError extends Error {
 
 #### 错误标准 (`Error Standards`)
 
-`ProviderRpcError`代码和消息返回值应该按照优先顺序遵循这些约定:
+`ProviderRpcError` 代码和消息返回值应该按照优先顺序遵循这些约定:
 
 1. 下面 提供者错误 (`Provider Errors`) 部分的错误。
 2. 错误的 `RPC` 方法规范规定的任何错误。
-3. 状态`CloseEvent`码。
+3. 状态 `CloseEvent` 码。
 
 ####  提供者错误 (`Provider Errors`)
 
@@ -159,20 +159,20 @@ interface ProviderRpcError extends Error {
 | 4900        | Disconnected          | 提供者(`Provider`)与所有链断开连接。                            |
 | 4901        | Chain Disconnected    | 提供者(`Provider`)未连接到请求的链。                    |
 
->状态码 `4900` 旨在指示 提供者(`Provider`)与所有链断开连接,
+>状态码 `4900` 旨在指示 提供者(`Provider`) 与所有链断开连接,
 >
 >而状态码 `4901` 旨在指示 提供者(`Provider`) 仅与特定链断开连接。换句话说,`4901` 意味着 提供者(`Provider`) 连接到其他链,而不是请求的链。
 
 ### 事件 (`Events`)
 
-`Provider`(提供者)**必须**实现以下事件处理方法:
+提供者(`Provider`) **必须**实现以下事件处理方法:
 
 - `on`
 - `removeListener`
 
 这些方法**必须**根据 Node.js [`EventEmitterAPI`][Node-Events]实现。
 
->为了满足这些要求, 提供者(`Provider`)的实现者应该考虑简单地扩展 Node.js `EventEmitter` 类并将其捆绑到目标环境中。
+>为了满足这些要求, 提供者(`Provider`) 的实现者应该考虑简单地扩展 Node.js `EventEmitter` 类并将其捆绑到目标环境中。
 
 #### 信息 (`message`)
 >该 `message` 事件旨在用于其他事件未涵盖的任意通知。
@@ -187,7 +187,7 @@ interface ProviderMessage {
 ```
 #### 订阅 (`Subscriptions`)
 
-如果 提供者(`Provider`) 支持`Ethereum RPC` 订阅,例如 `eth_subscribe`, 提供者(`Provider`) **必须**在收到订阅通知时发出 消息(`message`) 事件。
+如果 提供者(`Provider`) 支持 `Ethereum RPC` 订阅,例如 `eth_subscribe`, 提供者(`Provider`) **必须**在收到订阅通知时发出 消息(`message`) 事件。
 
 如果 提供者(`Provider`) 从 `eth_subscribe` 订阅中接受到订阅信息, 提供者(`Provider`) **必须**使用以下形式的 `ProviderMessage` 对象发出消息事件:
 
@@ -203,14 +203,14 @@ interface EthSubscription extends ProviderMessage {
 
 #### 连接 (`connectivity`)
 
-有关 `connected`(已连接) 的定义,请参阅[connectivity(连接性)](#连接性-connectivity)部分。
+有关 `connected`(已连接) 的定义,请参阅[连接性 (`connectivity`)](#连接性-connectivity)部分。
 
 如果 提供者(`Provider`) 已连接,则 提供者(`Provider`) **必须**发出名为 `connect` 的事件。
 
 这包括以下情况:
 
 - 提供者(`Provider`) 在初始化后首先连接到一条链上。
-- 断开连接(`disconnect`) 事件(`Event`) 发出后, 提供者(`Provider`)连接到链。
+- 断开连接(`disconnect`) 事件(`Event`) 发出后, 提供者(`Provider`) 连接到链。
 
 此事件**必须**与以下形式的对象一起发出:
 
@@ -227,7 +227,8 @@ interface ProviderConnectInfo {
 
 有关 断开连接(`disconnect`) 的定义,请参阅[连接性(`connectivity`)](#连接性-connectivity)部分。
 
-如果 提供者(`Provider`) 与所有链 断开连接(`disconnect`),提供者(`Provider`)**必须**根据[RPC错误(`RPC Errors`)](#rpc-错误)部分中定义的接口发出名为 断开链接(`disconnect`) 的事件,其值为 `error: ProviderRpcError`。 错误代码属性的值必须跟在 `CloseEvent` 的[状态代码][Status_codes]之后。
+如果 提供者(`Provider`) 与所有链 断开连接(`disconnect`),提供者(`Provider`)**必须**根据[RPC错误(`RPC Errors`)](#rpc-错误)部分中定义的接口发出名为 断开链接(`disconnect`) 的事件,其值为 `error: ProviderRpcError`。 
+错误代码属性的值必须跟在 `CloseEvent` 的[状态代码][Status_codes]之后。
 
 ### 切换链 (`chainChanged`)
 
@@ -241,12 +242,12 @@ interface ProviderConnectInfo {
 
 ## 基本原理 (`Rationale`)
 
- 提供者(`Provider`) 的目的是为消费者提供对 `Ethereum` 的直接访问。通常, 提供者(`Provider`)**必须**使`Ethereum` `Web` 应用程序能够做两件事:
+ 提供者(`Provider`) 的目的是为消费者提供对 `Ethereum` 的直接访问。通常, 提供者(`Provider`)**必须**使 `Ethereum Web` 应用程序能够做两件事:
 
 - 发出`Ethereum RPC` 请求
 - 响应 提供者(`Provider`) 的 `Ethereum` 链、客户端和钱包中的状态变化
 
-`Provider API` 规范由一个方法和五个事件组成。 仅`request`和`message`事件就足以实现一个完整的 `Provider`。 它们旨在分别发出任意 `RPC` 请求和传递任意消息。
+`Provider API` 规范由一个方法和五个事件组成。 仅 `request` 和 `message` 事件就足以实现一个完整的 `Provider`。 它们旨在分别发出任意 `RPC` 请求和传递任意消息。
 
 其余四个事件可以分为两类:
 
@@ -263,7 +264,7 @@ interface ProviderConnectInfo {
 
 许多 提供者(`Provider`) 在最终确定之前采用了该规范的草案版本。
 当前的 `API` 被设计为遗留版本的严格超集,并且此规范在这个意义上是完全向后兼容的。
-有关遗留 `API`,请参阅[附录 III](#附录-iii旧版提供程序-api) 。
+有关遗留 `API`,请参阅 [附录 III 旧版提供程序 api](#附录-iii旧版提供程序-api) 。
 
 仅实现此规范的 提供者(`Provider`) 将不兼容以遗留 `API` 为目标的 `Ethereum Web` 应用程序。
 
@@ -282,9 +283,9 @@ interface ProviderConnectInfo {
 
 提供者(`Provider`) 旨在在 `Ethereum` 客户端和 `Ethereum` 应用程序之间传递消息。不负责私钥或账户管理;
 
-它仅处理 `RPC` 消息并发出事件。因此,账户安全和用户隐私需要在 提供者(`Provider`) 和它的`Ethereum`客户端之间的中间件中实现。
+它仅处理 `RPC` 消息并发出事件。因此,账户安全和用户隐私需要在 提供者(`Provider`) 和它的 `Ethereum` 客户端之间的中间件中实现。
 
-在实践中,我们将这些中间件应用程序称为“钱包(`Wallet`)”,它们通常管理用户的私钥(`private keys`)和帐户("Accounts")。
+在实践中,我们将这些中间件应用程序称为 “钱包(`Wallet`)”,它们通常管理用户的 私钥(`private keys`) 和 帐户("Accounts")。
 
 提供者(`Provider`) 可以被认为是 钱包(`Wallet`) 的扩展,在某些第三方(例如网站)的控制下暴露在不受信任的环境中。
 
@@ -292,7 +293,7 @@ interface ProviderConnectInfo {
 
 由于是`JavaScript`对象,消费者一般可以对 提供者(`Provider`) 进行任意操作,它的所有属性都可以被读取或覆盖。
 
-因此,最好将 提供者(`Provider`) 对象视为由对手控制。 提供者(`Provider`)的实现者通过确保以下内容来保护用户、钱包和客户,这一点至关重要:
+因此,最好将 提供者(`Provider`) 对象视为由对手控制。 提供者(`Provider`) 的实现者通过确保以下内容来保护用户、钱包(`Wallet`)和客户端(`Client`),这一点至关重要:
 
 - 提供者(`Provider`) 不包含任何私人用户数据。
 - 提供者(`Provider`) 和 钱包(`Wallet`) 程序是相互隔离的。
@@ -307,7 +308,9 @@ interface ProviderConnectInfo {
 
 ### 用户帐户公开和帐户更改 (User Account Exposure and Account Changes)
 
-许多 `Ethereum` 写入操作(例如 `eth_sendTransaction` )需要指定用户帐户。 提供者(`Provider`) 通过消费者 `RPC` 方法访问这些帐户 `eth_accounts`,并监听 `accountsChanged` 事件。
+许多 `Ethereum` 写入操作(例如 `eth_sendTransaction` )需要指定用户帐户。 
+
+提供者(`Provider`) 通过消费者 `RPC` 方法访问这些帐户 `eth_accounts`,并监听 `accountsChanged` 事件。
 
 与之一样,具有正确的返回值 `eth_chainId` 至关重要,并且只要该值发生变化就会触发事件。
 
@@ -347,7 +350,7 @@ interface RequestArguments {
 Provider.request(args: RequestArguments): Promise<unknown>;
 ```
 
-返回的 `Promise` 使用方法的结果解析或拒绝使用`ProviderRpcError`. 例如:
+返回的 `Promise` 使用方法的结果解析或拒绝使用 `ProviderRpcError`. 例如:
 
 ```typescript copy
 Provider.request({ method: 'eth_accounts' })
@@ -393,11 +396,11 @@ Provider.on('connect', listener: (connectInfo: ProviderConnectInfo) => void): Pr
 Provider.on('disconnect', listener: (error: ProviderRpcError) => void): Provider;
 ```
 
-此事件发出一个`ProviderRpcError`. 错误`code`遵循`CloseEvent`[状态代码表][CloseEvent]。
+此事件发出一个 `ProviderRpcError`. 错误 `code` 遵循 `CloseEvent` [状态代码表][CloseEvent]。
 
 ### 切换链 (`chainChanged`)
 
-在 提供者(`Provider`) `chainChanged`在连接到新链时发出。
+在 提供者(`Provider`) `chainChanged` 在连接到新链时发出。
 
 ```typescript copy
 Provider.on('chainChanged', listener: (chainId: string) => void): Provider;
@@ -407,7 +410,7 @@ Provider.on('chainChanged', listener: (chainId: string) => void): Provider;
 
 ### 切换钱包帐号 (`accountsChanged`)
 
-在提供者(`Provider`) 从(`eth_accounts`) 切换钱包帐号`accountsChanged`返回的帐户更改时发出。
+在提供者(`Provider`) 从(`eth_accounts`) 切换钱包帐号 `accountsChanged` 返回的帐户更改时发出。
 
 ```typescript copy
 Provider.on('accountsChanged', listener: (accounts: string[]) => void): Provider;
@@ -417,7 +420,7 @@ Provider.on('accountsChanged', listener: (accounts: string[]) => void): Provider
 
 ### 信息 (`message`)
 
-在 提供者(`Provider`) 发出`message`以向消费者传达任意消息。消息可能包括 JSON-RPC通知、GraphQL订阅、提供者(`Provider`)定义的任何其他事件。
+在 提供者(`Provider`) 发出 消息(`message`) 以向消费者传达任意消息。消息(`message`) 可能包括 `JSON-RPC` 通知、`GraphQL订阅`、提供者(`Provider`) 定义的任何其他事件。
 
 ```typescript copy
 interface ProviderMessage {
